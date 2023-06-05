@@ -1,0 +1,17 @@
+@import './base.css';
+
+#app {
+
+  margin: 0 auto;
+  padding:0;
+  font-family: Inter, sans-serif;
+
+}
+
+@media (hover: hover) {
+
+}
+
+@media (min-width: 1024px) {
+
+}
