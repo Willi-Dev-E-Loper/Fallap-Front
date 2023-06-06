@@ -8,7 +8,7 @@
     <div class="panel-super-admin  row">
 
       <div class="titulo p-0">
-        <h1>{{router.currentRoute.value.params.titulo ?? 'Crear falla'}}</h1>
+        <h1>{{params.titulo ?? 'Crear falla'}}</h1>
       </div>
 
       <v-file-input
@@ -147,7 +147,7 @@
       ></v-text-field>
 
       <button class="btn d-flex col-sm-12 boton" @click="submitFalla">
-        Crear falla
+         {{store.state.idFalla === null? 'Crear falla' : 'Editar falla'}}
       </button>
       <v-progress-linear
           v-if="loading"
@@ -171,7 +171,7 @@ import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {dateNow} from "@/utils/date";
 import {useStore} from "vuex";
-import {fallaAdd} from "@/utils/icons";
+import {eventAdd, fallaAdd} from "@/utils/icons";
 const router = useRouter()
 const store = useStore()
 let imagenPortada= ref()
@@ -188,7 +188,7 @@ let telefonoFalla= ref()
 let webFalla = ref()
 let boxMsg = ref(false)
 let loading = ref(false)
-
+let params = ref(router.currentRoute.value.params)
 let card=ref({
   icono: fallaAdd,
   titulo:nombreFalla.value,
@@ -200,6 +200,7 @@ let card=ref({
 })
 
 const realizarAccionAvanzar = ()=> {
+
   loading.value = true
   let formdata = new FormData()
   if(imagenPortada.value){
@@ -218,18 +219,71 @@ const realizarAccionAvanzar = ()=> {
   formdata.append('emailFalla', emailFalla.value)
   formdata.append('telefonoFalla', telefonoFalla.value)
   formdata.append('webFalla', webFalla.value)
-  store.dispatch('postNewFalla',formdata).then(()=>{
-    store.dispatch('getUserData')
-    card.value={
-      icono: fallaAdd,
-      titulo:'Falla creada correctament!',
+  const handleError = () => {
+    boxMsg.value = true;
+    card.value = {
+      icono: eventAdd,
+      titulo: 'Oh oh, algo no ha ixit com esperava!',
       mensage: '',
-      type:'success',
+      type: '',
       boton: 'Tornar al home',
       boton1: '',
       boton2: ''
-    }
-  })
+    };
+    setTimeout(() => {
+      boxMsg.value = false;
+    }, 3000);
+    setTimeout(() => {
+      loading.value = false;
+    }, 3000);
+    setTimeout(() => {
+      card.value = {
+        icono: eventAdd,
+        titulo:'Event creat!',
+        mensage: '',
+        type:'success',
+        boton: 'Tornar al home',
+        boton1: '',
+        boton2: ''
+      };
+    }, 4000);
+  };
+  if(store.state.idFalla !== null){
+    store.dispatch('putFalla',formdata).then((res) => {
+      if (!res.ok) {
+        handleError();
+      } else {
+        card.value={
+          icono: fallaAdd,
+          titulo:'Falla creada correctament!',
+          mensage: '',
+          type:'success',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        }
+
+        boxMsg.value = true;
+      }
+    });
+    store.dispatch('getUserData');
+  }else{
+    store.dispatch('postNewFalla',formdata).then(()=>{
+      store.dispatch('getUserData')
+      card.value={
+        icono: fallaAdd,
+        titulo:'Falla creada correctament!',
+        mensage: '',
+        type:'success',
+        boton: 'Tornar al home',
+        boton1: '',
+        boton2: ''
+      }
+    })
+    store.dispatch('getUserData');
+
+  }
+
 }
 const realizarAccionCancelar = ()=> {
   boxMsg.value = false
@@ -251,7 +305,20 @@ function submitFalla(){
 
 onMounted(()=> {
   const titulo = router.currentRoute.value;
-  console.log(titulo); // Aquí puedes hacer lo que desees con el prop recibido
+  console.log(params.value.edit); // Aquí puedes hacer lo que desees con el prop recibido
+  if(params.value.edit === 'true'){
+    const falla =useStore().state.falla
+    nombreFalla.value = falla.nombre
+    fechaFalla.value= falla.fechaCreacion
+    direccionFalla.value= falla.direccion
+    descripcionFalla.value = falla.descripcion
+    reinaMayor.value= falla.cargos[0]
+    reinaInfantil.value= falla.cargos[1]
+    presidente.value= falla.cargos[2]
+    emailFalla.value= falla.email
+    telefonoFalla.value= falla.telefono
+    webFalla.value= falla.web
+  }
 })
 </script>
 

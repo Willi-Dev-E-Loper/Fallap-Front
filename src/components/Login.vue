@@ -25,14 +25,15 @@
             class="mt-1 col-sm-12 p-0 custom-input w-100 "
             variant="outlined"
             v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required, rules.min]"
             :type="show ? 'text' : 'password'"
             name="input-10-1"
-            label="Contrasenya"
+            label="Contrassenya"
             hint="At least 8 characters"
             counter
-            @click:append="show = !show"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            @click:append-inner="show = !show"
         ></v-text-field>
         <button class="btn d-flex col-sm-12 boton w-100" @click="doLogin">
           Iniciar sessió

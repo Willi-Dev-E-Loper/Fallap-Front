@@ -9,7 +9,8 @@
 
 
       <div class="titulo p-0">
-        <h1>{{params.titulo ?? 'Crear comentari'}}</h1>
+        <h1>          {{params.contenido ? 'Editar comentari' : 'Postejar'}}
+        </h1>
       </div>
       <v-form   @submit.prevent="addComent" ref="form" class="p-0">
         <v-file-input
@@ -33,7 +34,7 @@
             placeholder="Introdueix  ací la informaciò del comentari"
             auto-grow
             counter
-            :rules="[v => !!v || 'El comentari no pot estar vuit']"
+            :rules="[v => !!v || 'El comentari no pot estar buit']"
             variant="outlined"
             rows="3"
             row-height="25"
@@ -43,15 +44,17 @@
             shaped
         >
         </v-textarea>
-        <button type="submit" class="btn d-flex col-sm-12 boton w-100" >
-          Postejar
-        </button>
         <v-progress-linear
             v-if="loading"
             indeterminate
             rounded
             color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
         ></v-progress-linear>
+        <button type="submit" class="btn d-flex col-sm-12 boton w-100" >
+          {{params.contenido ? 'Editar comentari' : 'Postejar'}}
+        </button>
+
       </v-form>
 
     </div>
@@ -95,8 +98,8 @@ let card=ref({
 })
 const addComent = () => {
 
-
-    if (form.value.validate()){
+    if (descripcionComentario.value){
+      loading.value= true
       store.commit("setIdComent", idComent.value);
       const coment = new FormData();
       if (imagenComentario.value) {
@@ -137,6 +140,7 @@ const addComent = () => {
 
       if (idComent.value) {
         store.dispatch("putComent", coment).then((res) => {
+          loading.value=false
           if (!res.ok) {
             handleError();
           } else {
@@ -148,6 +152,7 @@ const addComent = () => {
         coment.append("idFalla", params.idFalla);
 
         store.dispatch("postNewComent", coment).then((res) => {
+          loading.value=false
           if (!res.ok) {
             handleError();
           } else {

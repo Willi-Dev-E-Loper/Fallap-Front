@@ -9,7 +9,7 @@
 
 
       <div class="titulo p-0">
-        <h1>Crear event</h1>
+        <h1>{{params.titulo ? 'Editar event' : 'Crear event'}}</h1>
       </div>
       <v-file-input
           v-model="imagenEvento"
@@ -27,6 +27,7 @@
           v-model="tituloEvento"
           class="mt-1 col-sm-12 p-0 custom-input"
           label="Titol de l'event"
+          :rules="[v => !!v || 'El titol no pot estar buit']"
           density="comfortable"
           variant="outlined"
           color="var(--dl-color-miostodos-moradoprincipal)"
@@ -34,13 +35,15 @@
       ></v-text-field>
       <v-text-field
           v-model="fechaEvento"
-          class="mt-1 col-sm-12 p-0 custom-input "
+          class="mt-1 col-sm-12 p-0 custom-input date-input"
           density="comfortable"
           label="Data de l'event"
-          prepend-inner-icon="mdi mdi-calendar-range"
+          type="date"
+          :rules="[v => !!v || 'El titol no pot estar buit']"
           placeholder="--/--/--"
           variant="outlined"
           color="var(--dl-color-miostodos-moradoprincipal)"
+          style="color:rgb(61 76 94 / 64%);"
 
       ></v-text-field>
       <v-textarea
@@ -74,15 +77,17 @@
           variant="outlined"
           color="var(--dl-color-miostodos-moradoprincipal)"
       ></v-text-field>
-      <button class="btn d-flex col-sm-12 boton" @click="submitEvent">
-        Crear event
-      </button>
-       <v-progress-linear
+      <v-progress-linear
           v-if="loading"
           indeterminate
           rounded
           color="var(--dl-color-miostodos-moradoprincipal)"
+          class="mb-2"
       ></v-progress-linear>
+      <button class="btn d-flex col-sm-12 boton" @click="submitEvent">
+        {{params.titulo ? 'Editar event' : 'Crear event'}}
+      </button>
+
     </div>
 
   </div>
@@ -128,7 +133,7 @@ let card=ref({
 
 function submitEvent(){
 
-
+  loading.value=true
   store.commit("setIdEvent", idEvent.value);
   let formdata = new FormData()
   if(imagenEvento.value){
@@ -173,6 +178,7 @@ function submitEvent(){
   //console.log(store.state.falla.idFalla)
   if(idEvent.value){
     store.dispatch('putEvent',formdata).then((res) => {
+      loading.value=false
       if (!res.ok) {
         handleError();
       } else {
@@ -183,6 +189,7 @@ function submitEvent(){
   }else{
     formdata.append('idFalla', store.state.falla.idFalla)
     store.dispatch('postNewEvent',formdata).then((res) => {
+      loading.value=false
       if (!res.ok) {
         handleError();
       } else {
@@ -212,6 +219,7 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+
 .box-message-wrapper {
   position: absolute;
   top: 0;

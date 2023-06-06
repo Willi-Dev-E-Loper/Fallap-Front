@@ -9,7 +9,8 @@
 
 
       <div class="titulo p-0">
-        <h1>Crear noticia</h1>
+        <h1>          {{params.contenido ? 'Editar noticia' : 'Crea noticia'}}
+        </h1>
       </div>
       <v-file-input
           v-model="imagenNoticia"
@@ -46,6 +47,13 @@
 
           shaped
       ></v-textarea>
+      <v-progress-linear
+          v-if="loading"
+          indeterminate
+          rounded
+          color="var(--dl-color-miostodos-moradoprincipal)"
+          class="mb-2"
+      ></v-progress-linear>
       <button class="btn d-flex col-sm-12 boton" @click="addComent">
         Postejar
       </button>
@@ -53,30 +61,112 @@
 
   </div>
   <nav-mobile></nav-mobile>
-
+  <v-fade-transition>
+    <div v-if="boxMsg" class="box-message-wrapper">
+      <box-message :card="card"></box-message>
+    </div>
+  </v-fade-transition>
 </template>
 
 <script setup>
 import {ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
+import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {dateNow} from "@/utils/date";
+import {comentAdd} from "@/utils/icons";
 
 const router = useRouter()
 const store = useStore()
 let imagenNoticia = ref()
 let descripcionNoticia = ref()
+const params = router.currentRoute.value.params;
+
 let tituloNoticia = ref()
+let boxMsg = ref(false)
+let loading = ref(false)
+let idNoticia = ref(params.idNoticia);
+
+let card=ref({
+  icono: comentAdd,
+  titulo:'Noticia postejada!',
+  mensage: '',
+  type:'success',
+  boton: 'Tornar al home',
+  boton1: '',
+  boton2: ''
+})
 
 const addComent= ()=>{
-  const notice = new FormData()
-  notice.append('file', imagenNoticia.value[0])
-  notice.append('descripcionNoticia', descripcionNoticia.value)
-  notice.append('fechaCreacion', dateNow())
+
   //coment.append('idFalla', store.state.falla.idFalla)
 
-  store.dispatch('postNewNotice', coment)
+  if (descripcionNoticia.value){
+    loading.value= true
+    store.commit("setIdNoticia", idNoticia.value);
+    const notice = new FormData()
+    if(imagenNoticia.value){
+      notice.append('file', imagenNoticia.value[0])
+    }
+    notice.append('descripcionNoticia', descripcionNoticia.value)
+    notice.append('tituloNoticia', tituloNoticia.value)
+    notice.append('fechaCreacion', dateNow())
+
+    const handleError = () => {
+      boxMsg.value = true;
+      card.value = {
+        icono: comentAdd,
+        titulo: 'Oh oh, algo no ha ixit com esperava!',
+        mensage: '',
+        type: '',
+        boton: 'Tornar al home',
+        boton1: '',
+        boton2: ''
+      };
+      setTimeout(() => {
+        boxMsg.value = false;
+      }, 3000);
+      setTimeout(() => {
+        loading.value = false;
+      }, 3000);
+      setTimeout(() => {
+        card.value = {
+          icono: comentAdd,
+          titulo: 'Noticia postejat!!',
+          mensage: '',
+          type: 'success',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        };
+      }, 4000);
+    };
+
+    if (idNoticia.value) {
+      store.dispatch("putNotice", notice).then((res) => {
+        loading.value=false
+        if (!res.ok) {
+          handleError();
+        } else {
+          boxMsg.value = true;
+        }
+      });
+      store.dispatch('getUserData');
+    } else {
+      notice.append("idFalla", params.idFalla);
+
+      store.dispatch("postNewNotice", notice).then((res) => {
+        loading.value=false
+        if (!res.ok) {
+          handleError();
+        } else {
+          boxMsg.value = true;
+        }
+      });
+      store.dispatch('getUserData');
+    }
+  }
 
 }
 function goBack(){router.back()}
@@ -85,6 +175,14 @@ function goBack(){router.back()}
 </script>
 
 <style scoped>
+.box-message-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
 .container-flex{
   font-family:'Inter', sans-serif;
   padding: 10px;

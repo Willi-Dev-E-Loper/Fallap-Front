@@ -88,6 +88,7 @@ let card = ref({
 })
 
 const realizarAccionAvanzar = ()=> {
+  console.log('asdasd')
   let formData = new FormData()
   if(csv.value){
     formData.append('csv', csv.value[0])

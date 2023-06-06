@@ -1,25 +1,28 @@
 <template>
   <v-container>
     <div class="d-flex flex-column align-center">
-      <div v-for="(evento, index) in eventos" :key="index" class="d-flex flex-column align-start justify-center p-4 mb-4 box-evento">
+      <div v-for="(noticia, index) in sortedNoticias" :key="index" class="d-flex flex-column align-start justify-center p-4 mb-4 box-evento">
         <div class="d-flex justify-space-between align-center p-0 w-100">
           <p class="p-evento m-0" >Noticia</p>
-          <div class="d-flex justify-space-around {{isAcciones ? 'w-25': ''}}">
-            <button v-if="isAcciones" @click="a" class="acciones-evento " href="#"><i class="mdi mdi-dots-vertical" ></i></button>
-            <button v-if="!isAcciones" @click="" class="acciones-evento " href="#"><i class="mdi mdi-pencil-outline" ></i></button>
-            <button v-if="!isAcciones" @click="" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
-
+          <div class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
+            <button v-if="showActions[index]" @click="toggleShowImg(index)" class="acciones-evento " href="#"><i class="mdi mdi-dots-vertical" ></i></button>
+            <button v-if="!showActions[index]" @click="editNotice(noticia.idNoticia, noticia.contenido)" class="acciones-evento " href="#"><i class="mdi mdi-pencil-outline" ></i></button>
+            <button v-if="!showActions[index]" @click="deleteComent(coment.idComentario)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
           </div>
         </div>
-        <div class="w-100">
-          <p class="fecha-evento">{{formatearFecha(evento.fechaEvento)}}</p>
+        <div v-if="noticia.imagen" >
+          <img class="w-100" :src="'http://localhost:8000/uploads/brochures/' + noticia.imagen" alt="imagen-comentario">
         </div>
-        <div class="info-evento d-flex flex-column p-0 mt-1 ">
-          <p class="TituloS m-0">{{evento.contenido}}</p>
+        <div class="info-evento d-flex flex-column p-0 mt-1">
+          <p class="tituloS m-0">{{ noticia.titulo }}</p>
+        </div>
+        <div class="info-evento d-flex flex-column p-0 mt-1">
+          <p class="textosReg m-0">{{ noticia.contenido }}</p>
         </div>
         <div class="d-flex align-start mt-3 textosS">
-          <p class="m-0">{{formatDateFooter(evento.fechaCreacion)}}</p>
+          <p class="m-0">{{ formatDateFooter(noticia.fechaNoticia) }}</p>
         </div>
+
 
       </div>
     </div>
@@ -31,26 +34,53 @@
 <script setup>
 import {useStore} from "vuex";
 import {computed, ref} from "vue";
-import {formatDateFooter} from "@/utils/date";
+import {formatDateFooter, parseFechaComentario} from "@/utils/date";
+import {useRouter} from "vue-router";
 
+const router = useRouter()
 const store = useStore()
-let isAcciones = ref(true)
-const eventos = computed(() => {
+let showActions = ref([])
+const noticias = computed(() => {
   if (store.state.falla) {
-    return store.state.falla.eventos;
+    showActions.value = Array(store.state.falla.noticias.length).fill(true);
+
+    return store.state.falla.noticias;
   } else {
     return [];
   }
 });
-const formatearFecha= (fechaOriginal)=> {
-  console.log(fechaOriginal)
-  const [dia, mes, anio] = fechaOriginal.split('-');
-  return `${dia}/${mes}`;
+const sortedNoticias= computed(() => {
+  return noticias.value.slice().sort((a, b) => {
+    const dateA = parseFechaComentario(a.fechaNoticia);
+    const dateB = parseFechaComentario(b.fechaNoticia);
+    return dateB - dateA;
+  });
+});
 
 
+const toggleShowImg = (index) => {
+  showActions.value[index] = !showActions.value[index];
+};
+
+
+
+const editNotice = (index, coment) => {
+  console.log(coment)
+  router.push({ name: 'Nuevo comentario',
+        params: { contenido:coment,
+                idFalla: store.state.falla.idFalla,
+                idComent: index}
+        ,
+        replace:true,
+      }
+  )
 }
-const a = ()=>{
-  isAcciones.value = !isAcciones.value
+const deleteNotice = (idComent)=>{
+  store.commit('setIdComent', idComent)
+  store.dispatch('deleteComent').then(()=>{
+    store.dispatch('getUserData')
+  })
+
 }
 </script>
 
@@ -59,7 +89,7 @@ const a = ()=>{
   font-family: 'Inter', sans-serif;
 }
 .box-evento {
-  width: 80vw;
+  width: 100%;
 
   box-shadow: 0 4px 6px -2px rgba(216, 226, 248, 0.3);
   background: #FFFFFF;
@@ -96,6 +126,7 @@ const a = ()=>{
   width:90%;
   word-break: break-word;
   color: #3D4C5E;
+
 
 }
 

@@ -28,7 +28,7 @@
       <div class="d-flex align-start mt-3 textosS">
         <p class="m-0">{{formatDateFooter(evento.fechaCreacion)}}</p>
       </div>
-      <button class="btn d-flex col-sm-12 boton" @click="">
+      <button class="btn d-flex col-sm-12 boton" @click="asistir(evento.idEvento)">
        {{evento.tienePago ? 'Pagar i assistir' : 'Assistir'}}
       </button>
     </div>
@@ -41,7 +41,7 @@
 <script setup>
 import {useStore} from "vuex";
 import {computed, ref} from "vue";
-import {formatDateFooter, parseFechaComentario} from "@/utils/date";
+import {formatDateFooter, parseFechaComentario, formatearFecha} from "@/utils/date";
 import {useRouter} from "vue-router";
 
 const store = useStore()
@@ -86,13 +86,18 @@ const deleteEvent = (idEvento)=>{
   })
 
 }
-const formatearFecha= (fechaOriginal)=> {
-  console.log(fechaOriginal)
-  const [dia, mes, anio] = fechaOriginal.split('-');
-  return `${dia}/${mes}`;
-
-
+const asistir = (idEvento)=>{
+  const id = store.state.id
+  const react = {
+    idEvento: idEvento,
+    idUsuario: id,
+  }
+  console.log( react)
+  store.dispatch('reactEvent', react).then(()=>{
+    store.dispatch('getUserData')
+  })
 }
+
 const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };

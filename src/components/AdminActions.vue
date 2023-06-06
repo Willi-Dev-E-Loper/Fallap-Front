@@ -129,7 +129,7 @@ const goCreate= ()=>{
 }
 const editFalla= ()=>{
   router.push({ name: 'newFalla',
-    params: {titulo: 'Editar falla'}
+    params: {titulo: 'Editar falla', edit: true}
   })
 }
 

@@ -58,3 +58,9 @@ export function parseFechaComentario(fechaComentario) {
     const second = parseInt(horaParts[2]);
     return new Date(year, month, day, hour, minute, second);
 }
+export const formatearFecha= (fechaOriginal)=> {
+    const [anio, mes, dia] = fechaOriginal.split('-');
+    return `${dia}/${mes}`;
+
+
+}

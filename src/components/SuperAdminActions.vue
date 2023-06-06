@@ -111,12 +111,12 @@ const setPremios= ()=>{
 }
 const createFalla= ()=>{
   router.push({ name: 'newFalla',
-                params: {titulo: 'Crear falla'}
+                params: {titulo: 'Crear falla', edit: false}
   })
 }
 const editFalla= ()=>{
   router.push({ name: 'newFalla',
-    params: {titulo: 'Editar falla'}
+    params: {titulo: 'Editar falla', edit: true}
   })
 }
 const createNew= ()=>{

@@ -71,11 +71,14 @@ body {
   font-stretch: normal;
 
 }
-.TituloS {
+.tituloS{
+
   font-size: 18px;
-  font-style: normal;
   font-weight: 500;
-  font-stretch: normal;
+  line-height: 25px;
+  letter-spacing: 0;
+  text-align: left;
+
 }
 .textosS{
   font-size: 12px;

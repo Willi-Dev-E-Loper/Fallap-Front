@@ -1,4 +1,4 @@
-import  {Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
+import  {WallNotice, Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
 
 export const routes=[
     { path: "/", redirect: "/login" },
@@ -6,90 +6,108 @@ export const routes=[
         path: "/login",
         name: "Login",
         component: Login,
-        meta: {
-            requiresAuth: true // Define requiresAuth como true para requerir autenticación
-        }
+
     },
     {
         path: "/falla",
         name: "Home",
         component: Falla,
-        meta: {
-            requiresAuth: true // Define requiresAuth como true para requerir autenticación
-        }
+        meta:{requiresAuth: true}
+
+
 
     },
     {
         path: "/sa-actions",
         name: "Acciones super-admin",
-        component: SuperAdminActions
+        component: SuperAdminActions,
+        meta:{requiresAuth: true}
     },
     {
         path: "/a-actions",
         name: "Acciones admin",
-        component: AdminActions
+        component: AdminActions,
+        meta:{requiresAuth: true}
     },
     {
         path: "/new-user",
         name: "Nuevo usuario",
-        component: AddUser
+        component: AddUser,
+        meta:{requiresAuth: true}
     },
     {
         path: "/new-user-csv",
         name: "Usuario desde CSV",
-        component: UsersFromCSV
+        component: UsersFromCSV,
+        meta:{requiresAuth: true}
     },
     {
         path: "/admin-manage",
         name: "Manejar administradores",
-        component: AdminManage
+        component: AdminManage,
+        meta:{requiresAuth: true}
     },
     {
         path: "/new-premi",
         name: "Nuevo premio",
-        component: PremiosManage
+        component: PremiosManage,
+        meta:{requiresAuth: true}
     },
     {
-        path: "/new-falla/:titulo",
+        path: "/new-falla/:titulo/:edit",
         name: 'newFalla',
         component: AddFalla,
+        meta:{requiresAuth: true}
 
     },
     {
         path: "/create",
         name: "crear",
-        component: Crear
+        component: Crear,
+        meta:{requiresAuth: true}
     },
     {
         path: "/new-llibret",
         name: "Nuevo llibret",
-        component: AddLlibrets
+        component: AddLlibrets,
+        meta:{requiresAuth: true}
 
     },
     {
         path: "/new-event/:titulo?/:contenido?/:idEvento?/:pago?/:tienePago?/:fecha?",
         name: "Nuevo evento",
-        component: AddEvent
+        component: AddEvent,
+        meta:{requiresAuth: true}
     },
     {
-        path: "/new-coment/:titulo/:contenido?/:idFalla?/:idComent?",
+        path: "/new-coment/:contenido?/:idFalla?/:idComent?",
         name: "Nuevo comentario",
-        component: AddComent
+        component: AddComent,
+        meta:{requiresAuth: true}
     },
     {
         path: "/new-enquest/:contenido?/:opciones?/:idEncuesta?/:idFalla?/:fecha?",
         name: "Nueva encuesta",
-        component: AddEncuesta
+        component: AddEncuesta,
+        meta:{requiresAuth: true}
     },
     {
-        path: "/new-notice",
+        path: "/new-notice/:titulo?/:contenido?/:idFalla?/:idNoticia?",
         name: "Nueva noticia",
-        component: AddNotice
+        component: AddNotice,
+        meta:{requiresAuth: true}
     },
     {
         path: "/wall-falla",
         name: "Muro falla",
-        component: WallFalla
+        component: WallFalla,
+        meta:{requiresAuth: true}
+    },
+    {
+        path: "/wall-notice",
+        name: "Muro noticias",
+        component: WallNotice,
+        meta:{requiresAuth: true}
     },
 
 ];

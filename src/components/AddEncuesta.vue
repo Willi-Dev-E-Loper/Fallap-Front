@@ -67,7 +67,7 @@
           color="var(--dl-color-miostodos-moradoprincipal)"
       ></v-text-field>
       <button class="btn d-flex col-sm-12 boton" @click="addEncuesta">
-        Crear event
+        {{params.contenido ? 'Editar enquesta' : 'Crear enquesta'}}
       </button>
       <v-progress-linear
           v-if="loading"
@@ -179,6 +179,8 @@ const addEncuesta= ()=>{
         boxMsg.value = true
       }
     })
+    store.dispatch('getUserData')
+
   }else{
     store.dispatch('postNewEncuesta', encuesta).then((res)=> {
       if (!res.ok) {
@@ -212,8 +214,9 @@ const addEncuesta= ()=>{
       } else {
         boxMsg.value = true
       }
+      store.dispatch('getUserData')
+
     })
-  store.dispatch('getUserData')
 
 }}
 function goBack(){router.back()}

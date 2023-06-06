@@ -74,8 +74,7 @@ const goEvent= ()=>{
   router.push({ path: '/new-event' })
 }
 const goComent= ()=>{
-  router.push({ name: 'Nuevo comentario',
-    params: {titulo: 'Crear comentario'}
+  router.push({ name: 'Nuevo comentario'
   })
 }
 function goBack(){router.back()}

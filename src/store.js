@@ -2,6 +2,7 @@ import {createStore} from 'vuex'
 import axios from 'axios'
 import * as jwt_decode from 'jwt-decode'
 import jwtDecode from "jwt-decode";
+import {da} from "vuetify/locale";
 
 export const store = createStore({
     state () {
@@ -24,6 +25,8 @@ export const store = createStore({
             token:null,
             expiration:null,
             isLoged: false,
+            idFalla:null,
+            idNoticia:null,
 
         }
     },
@@ -81,6 +84,12 @@ export const store = createStore({
         },
         setIsLoged(state, payload){
             state.isLoged = payload
+        },
+        setIdFalla(state, payload){
+            state.idFalla = payload
+        },
+        setIdNoticia(state, payload){
+            state.idNoticia = payload
         }
 
     },
@@ -99,6 +108,7 @@ export const store = createStore({
                         commit('setPhone', userData.telefono);
                         commit('setFalla', userData.falla);
                         commit('setId', userData.id);
+                        commit('setIdFalla', userData.falla.idFalla);
                         console.log(userData.falla);
 
                         resolve(); // Resuelve la promesa sin ningún valor adicional
@@ -203,6 +213,16 @@ export const store = createStore({
                     console.log(err)
                 })
         },
+        async reactEvent({commit, state}, data){
+            console.log(data)
+            await axios.put('http://localhost:8000/api/evento/setParticipante/'+ data.idEvento, data.idUsuario)
+                .then(()=>
+                    {console.log('succes')}
+                )
+                .catch((err)=>{
+                    console.log(err)
+                })
+        },
         async postNewFalla({commit, state}, data){
 
                     try {
@@ -221,6 +241,25 @@ export const store = createStore({
                         console.log(error);
                         throw error;
                     }
+        },
+        async putFalla({commit, state}, data){
+            console.log(state.idFalla)
+            try {
+                const response = await axios.post(
+                    'http://localhost:8000/api/falla/' + state.idFalla,
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                return response.data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
         },
         async setLlibret({commit, state}, data){
             try {
@@ -309,16 +348,41 @@ export const store = createStore({
                 })
         },
         async postNewNotice({commit, state}, data){
-            await axios.post('http://localhost:8000/api/noticia/new', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }})
-                .then(()=>
-                    {console.log('succes')}
-                )
-                .catch((err)=>{
-                    console.log(err)
-                })
+            try {
+                const response = await axios.post(
+                    'http://localhost:8000/api/noticia/new',
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                return response.data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        async putNotice({commit, state}, data){
+
+            try {
+                const response = await axios.post(
+                    'http://localhost:8000/api/noticia/'+ state.idNoticia,
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                return response.data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
         },
         async postNewEncuesta({commit, state}, data){
             try {
@@ -367,6 +431,22 @@ export const store = createStore({
         },
         async postNewCsv({commit, state}, data){
 
+            try {
+                const response = await axios.post(
+                    'http://localhost:8000/api/user/importCsv',
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                return response.data;
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
         },
         async postRole({commit, state}, data){
             await axios.post('http://localhost:8000/api/user/setRoles', data, {

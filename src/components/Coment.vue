@@ -55,8 +55,7 @@ const toggleShowImg = (index) => {
 const editComent = (index, coment) => {
   console.log(coment)
   router.push({ name: 'Nuevo comentario',
-    params: {titulo: 'Editar comentario',
-              contenido:coment,
+    params: { contenido:coment,
               idFalla: store.state.falla.idFalla,
               idComent: index}
         ,
