@@ -154,7 +154,7 @@ const addComent= ()=>{
       });
       store.dispatch('getUserData');
     } else {
-      notice.append("idFalla", params.idFalla);
+      notice.append("idFalla", 99999);
 
       store.dispatch("postNewNotice", notice).then((res) => {
         loading.value=false

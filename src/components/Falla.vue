@@ -18,21 +18,16 @@
         <div class="chips d-flex flex-column align-start">
           <v-chip
               class="mt-3"
-              prepend-icon="mdi mdi-map-marker-star-outline"
-          >
-            {{falla.direccion}}
-          </v-chip>
-          <v-chip
-              class="mt-3"
               prepend-icon="mdi-account-circle-outline"
+              color="grey"
           >
             {{falla.falleros.length}} Fallers/es
           </v-chip>
         </div>
-        <div class="descripcion mt-3">
+        <div class="descripcion mt-4">
           <p>{{falla.descripcion}}</p>
         </div>
-        <h1 class="falla">Càrregs oficials 2023</h1>
+        <h1 class="falla mt-8">Càrregs oficials 2023</h1>
         <div class="cargos d-flex flex-column align-start">
           <v-chip
               class="mt-3"
@@ -63,11 +58,12 @@
         <v-tabs
             bg-color="#F0F3F6"
             color="#F0F3F6"
-            class="mt-6"
+            class="mt-8"
             selected-class="a"
             align-tabs="center"
             v-model="tab"
             grow
+            center-active
             rouded
             hide-slider
         >
@@ -79,6 +75,10 @@
           <v-window v-model="tab">
             <v-window-item value="one" >
               <div class="actions d-flex flex-column">
+                <div v-if="falla.premios.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+                  <div v-html="badWay" ></div>
+                  Encara no hi han premis que mostrar
+                </div>
                 <button
                     v-for="(premio,index) in falla.premios"
                     :key="index"
@@ -99,11 +99,14 @@
 
             <v-window-item value="two">
               <div class="actions d-flex flex-column">
+                <div v-if="falla.llibrets.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+                  <div v-html="badWay"></div>
+                  Encara no hi han llibrets que mostrar
+                </div>
                 <button
                     v-for="(llibret,index) in falla.llibrets"
                     :key="index"
-                    @click="ejecutar(index)"
-                    :href="llibret[2]"
+                    @click="ejecutar(llibret[2])"
                     class="btn d-flex col-sm-12 boton ">
                   <div class="feo" v-html="logoLlibret">
                   </div>
@@ -123,23 +126,23 @@
               <div class="actions d-flex flex-column m-0">
                <div class="admin mt-4 ">
                  <p class="textosM contacto m-0">Responsable/s</p>
-                 <p class="parrafosReg contacto-datos m-0" >{{ admins }}</p>
+                 <p class="parrafosReg contacto-datos m-0" >{{ admins ? admins : 'Sense assignar' }}</p>
                </div>
                 <div class="admin mt-4 ">
                   <p class="textosM contacto m-0">Telèfon</p>
-                  <p class="parrafosReg contacto-datos m-0" >{{ falla.telefono }}</p>
+                  <p class="parrafosReg contacto-datos m-0" >{{ falla.telefono ? falla.telefono : 'Sense assignar'}}</p>
                 </div>
                 <div class="admin mt-4 ">
                   <p class="textosM contacto m-0">Email</p>
-                  <p class="parrafosReg contacto-datos m-0" >{{ falla.email }}</p>
+                  <p class="parrafosReg contacto-datos m-0" >{{ falla.email ? falla.email : 'Sense assignar' }}</p>
                 </div>
                 <div class="phone mt-4 ">
                   <p class="textosM contacto m-0">Direcció</p>
-                  <p class="parrafosReg contacto-datos m-0" >{{ falla.direccion }}</p>
+                  <p class="parrafosReg contacto-datos m-0" >{{ falla.direccion ? falla.direccion : 'Sense assignar' }}</p>
                 </div>
                 <div class="web mt-4 ">
                   <p class="textosM contacto m-0">Lloc web</p>
-                  <p class="parrafosReg contacto-datos m-0" >{{ falla.web }}</p>
+                  <p class="parrafosReg contacto-datos m-0" >{{ falla.web ? falla.web : 'Sense assignar'}}</p>
                 </div>
               </div>
             </v-window-item>
@@ -154,8 +157,8 @@
 </template>
 <script setup>
 import NavMobile from "@/components/NavMobile.vue";
-import {logoRight, logoPremio, logoLlibret} from "@/utils/icons";
-import {computed, ref} from "vue";
+import {logoRight, logoPremio, logoLlibret, badWay} from "@/utils/icons";
+import {computed, onMounted, ref} from "vue";
 import {useStore} from "vuex";
 
 const store = useStore()
@@ -176,9 +179,13 @@ const admins = computed( () => {
 const goCreate = () => {
   isLibrets.value = !isLibrets.value
 }
-const ejecutar= (accion)=>{
-  eval(accion)
+const ejecutar= (llibret)=>{
+  const pdf = 'http://localhost:8000/uploads/brochures/' + llibret
+  window.open(pdf)
 }
+onMounted(()=>{
+  store.dispatch('getUserData')
+})
 
 </script>
 <style scoped>
@@ -251,6 +258,22 @@ const ejecutar= (accion)=>{
   letter-spacing: 0;
   text-align: left;
 
+}
+.badway{
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
+
+  color: #3D4C5E;
+  border: 1px #EBEEF2 solid;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 16px;
+  box-shadow: 0px 4px 6px -2px rgba(216, 226, 248, 0.3);
+  border-radius: 8px;
 }
 .boton{
   font-weight: 500;

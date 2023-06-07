@@ -17,4 +17,5 @@ export { default as AddNotice } from  "@/components/AddNotice.vue";
 export { default as WallFalla } from  "@/components/WallFalla.vue";
 export { default as Login } from  "@/components/Login.vue";
 export { default as WallNotice } from  "@/components/Wall-notice.vue";
+export { default as ShowEncuestas } from  "@/components/ShowEncuestas.vue";
 

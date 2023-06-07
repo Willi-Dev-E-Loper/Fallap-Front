@@ -5,7 +5,7 @@
         <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <div class="panel-super-admin  row mt-16">
+    <div class="panel-super-admin d-flex justify-content-center row mt-16">
       <div class="d-flex justify-center mt-10 " v-html="logoFallap"></div>
 
       <div class="custom-card  mt-8 ">
@@ -13,17 +13,19 @@
           <h1 class="TituloL">Benvigut/da de nou al teu portal faller!</h1>
         </div>
         <v-text-field
-            class="mt-3 col-sm-12 p-0 custom-input w-100 "
+            class="mt-3 m-0 p-0 custom-input w-100 hei "
             density="comfortable"
             label="Correu"
             v-model="email"
             variant="outlined"
             color="var(--dl-color-miostodos-moradoprincipal)"
+            hide-details
 
         ></v-text-field>
         <v-text-field
-            class="mt-1 col-sm-12 p-0 custom-input w-100 "
+            class=" custom-input  w-100 hei "
             variant="outlined"
+            density="comfortable"
             v-model="password"
             :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required, rules.min]"
@@ -35,7 +37,7 @@
             color="var(--dl-color-miostodos-moradoprincipal)"
             @click:append-inner="show = !show"
         ></v-text-field>
-        <button class="btn d-flex col-sm-12 boton w-100" @click="doLogin">
+        <button class="btn d-flex boton w-100" @click="doLogin">
           Iniciar sessió
         </button>
         <v-progress-linear
@@ -59,7 +61,7 @@
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
@@ -77,6 +79,7 @@ let rules= ref({
   min: v => v.length >= 8 || 'Min 8 characters',
   emailMatch: () => (`The email and password you entered don't match`),
 })
+
 const doLogin = () => {
   loading.value = true
   const user = {
@@ -85,10 +88,16 @@ const doLogin = () => {
   }
   store.dispatch('login', user).then((res)=>{
     console.log(res)
-    store.dispatch('getUserData')
+    store.dispatch('getUserData').then(()=>{
+      console.log(store.state.falla)
+      router.push({path:'/falla'})
+      loading.value= false
+    })
     store.dispatch('getFallasToSelect')
-    router.push({path:'/falla'})
-    loading.value= false
+    store.dispatch('getNoticias')
+    console.log(store.state.falla)
+  }).catch((err)=>{
+    console.log(err.request)
   })
 }
 
@@ -101,7 +110,8 @@ const doLogin = () => {
 
 }
 .custom-card{
-  height: 25%;
+  width:344px;
+  height:426px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -113,6 +123,11 @@ const doLogin = () => {
 
   box-shadow: 0px 0px 2px rgba(231, 213, 255, 0.6), 0px 4px 40px -2px rgba(219, 217, 241, 0.6);
   border-radius: 16px;
+}
+.hei{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-evenly;
 }
 .box-message-wrapper {
   position: absolute;
@@ -155,7 +170,6 @@ const doLogin = () => {
   color: #EBEEF2;
   background-color: var(--dl-color-miostodos-moradoprincipal);
   border: 1px #EBEEF2 solid;
-  margin-top: 16px;
   display: flex;
   flex-direction: row;
   justify-content: center;

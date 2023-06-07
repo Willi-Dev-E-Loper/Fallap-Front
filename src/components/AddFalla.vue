@@ -10,152 +10,150 @@
       <div class="titulo p-0">
         <h1>{{params.titulo ?? 'Crear falla'}}</h1>
       </div>
+      <v-form   @submit.prevent="submitFalla" ref="form" class="p-0">
+        <v-file-input
+            v-model="imagenPortada"
+            class="mt-4  p-0 custom-select "
+            clearable
+            chips
+            base-color="var(--dl-color-miostodos-moradoprincipal)"
+            label="Selecciona imatge de portada"
+            variant="outlined"
+            prepend-icon=""
+            prepend-inner-icon="mdi mdi-panorama-variant-outline"
+            density="comfortable"
+        ></v-file-input>
+        <v-file-input
+            v-model="logoFalla"
+            class="mt-1  p-0 custom-select "
+            clearable
+            chips
+            label="Selecciona el logo de la falla"
+            base-color="var(--dl-color-miostodos-moradoprincipal)"
+            variant="outlined"
+            prepend-icon=""
+            prepend-inner-icon="mdi mdi-shield-star-outline"
+            density="comfortable"
+        ></v-file-input>
+        <v-text-field
+            v-model="nombreFalla"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Nom de la falla"
+            prepend-inner-icon="mdi mdi-account-outline"
+            :rules="[v => !!v || 'El nom de la falla no pot estar buit']"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="fechaFalla"
+            class="mt-1 col-sm-12 p-0 custom-input "
+            density="comfortable"
+            label="Any de fundaciò"
+            prepend-inner-icon="mdi mdi-calendar-range"
+            placeholder="1972"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      <v-file-input
-          v-model="imagenPortada"
-          class="mt-4  p-0 custom-select "
-          clearable
-          chips
-          base-color="var(--dl-color-miostodos-moradoprincipal)"
-          label="Selecciona imatge de portada"
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi mdi-panorama-variant-outline"
-          density="comfortable"
-      ></v-file-input>
-      <v-file-input
-          v-model="logoFalla"
-          class="mt-1  p-0 custom-select "
-          clearable
-          chips
-          label="Selecciona el logo de la falla"
-          base-color="var(--dl-color-miostodos-moradoprincipal)"
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi mdi-shield-star-outline"
-          density="comfortable"
-      ></v-file-input>
-      <v-text-field
-          v-model="nombreFalla"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Nom de la falla"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-      <v-text-field
-          v-model="fechaFalla"
-          class="mt-1 col-sm-12 p-0 custom-input "
-          density="comfortable"
-          label="Any de fundaciò"
-          prepend-inner-icon="mdi mdi-calendar-range"
-          placeholder="1972"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="direccionFalla"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Direcciò física"
+            prepend-inner-icon="mdi mdi-map-marker-outline"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="direccionFalla"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Direcciò física"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-textarea
+            v-model="descripcionFalla"
+            label="Pequeña descripciò, máx 160 lletres"
+            auto-grow
+            counter
+            variant="outlined"
+            rows="3"
+            row-height="25"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-textarea
-          v-model="descripcionFalla"
-          label="Pequeña descripciò, máx 160 lletres"
-          auto-grow
-          counter
-          variant="outlined"
-          rows="3"
-          row-height="25"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+            shaped
+        ></v-textarea>
 
-          shaped
-      ></v-textarea>
+        <div class="titulo p-0">
+          <h1>Càrregs oficials</h1>
+        </div>
+        <v-text-field
+            v-model="reinaMayor"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Reina major"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      <div class="titulo p-0">
-        <h1>Càrregs oficials</h1>
-      </div>
-      <v-text-field
-          v-model="reinaMayor"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Reina major"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="reinaInfantil"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Reina infantil"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="reinaInfantil"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Reina infantil"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="presidente"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="President"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="presidente"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="President"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <div class="titulo p-0">
+          <h1>Contacte</h1>
+        </div>
+        <v-text-field
+            v-model="emailFalla"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Correu"
+            prepend-inner-icon="mdi mdi-email-outline"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <div class="titulo p-0">
-        <h1>Contacte</h1>
-      </div>
-      <v-text-field
-          v-model="emailFalla"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Correu"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="telefonoFalla"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Telefon"
+            prepend-inner-icon="mdi mdi-cellphone"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="telefonoFalla"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Telefon"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-text-field
+            v-model="webFalla"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Lloc web"
+            prepend-inner-icon="mdi mdi-web"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="webFalla"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Lloc web"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-      ></v-text-field>
-
-      <button class="btn d-flex col-sm-12 boton" @click="submitFalla">
-         {{store.state.idFalla === null? 'Crear falla' : 'Editar falla'}}
-      </button>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
-
+        ></v-text-field>
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
+        ></v-progress-linear>
+        <button type="submit" class="btn d-flex col-sm-12 w-100 boton">
+          {{params.titulo ?? 'Crear falla'}}
+        </button>
+      </v-form>
     </div>
     <nav-mobile></nav-mobile>
   </div>
@@ -220,7 +218,7 @@ const realizarAccionAvanzar = ()=> {
   formdata.append('telefonoFalla', telefonoFalla.value)
   formdata.append('webFalla', webFalla.value)
   const handleError = () => {
-    boxMsg.value = true;
+
     card.value = {
       icono: eventAdd,
       titulo: 'Oh oh, algo no ha ixit com esperava!',
@@ -230,6 +228,7 @@ const realizarAccionAvanzar = ()=> {
       boton1: '',
       boton2: ''
     };
+    boxMsg.value = true;
     setTimeout(() => {
       boxMsg.value = false;
     }, 3000);
@@ -248,7 +247,8 @@ const realizarAccionAvanzar = ()=> {
       };
     }, 4000);
   };
-  if(store.state.idFalla !== null){
+  console.log(params.value.edit)
+  if(params.value.edit === 'true'){
     store.dispatch('putFalla',formdata).then((res) => {
       if (!res.ok) {
         handleError();
@@ -268,18 +268,23 @@ const realizarAccionAvanzar = ()=> {
     });
     store.dispatch('getUserData');
   }else{
-    store.dispatch('postNewFalla',formdata).then(()=>{
-      store.dispatch('getUserData')
-      card.value={
-        icono: fallaAdd,
-        titulo:'Falla creada correctament!',
-        mensage: '',
-        type:'success',
-        boton: 'Tornar al home',
-        boton1: '',
-        boton2: ''
+    store.dispatch('postNewFalla',formdata).then((res)=>{
+      if (!res.ok) {
+        handleError();
+      } else {
+        card.value={
+          icono: fallaAdd,
+          titulo:'Falla creada correctament!',
+          mensage: '',
+          type:'success',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        }
+
+        boxMsg.value = true;
       }
-    })
+    });
     store.dispatch('getUserData');
 
   }

@@ -1,31 +1,35 @@
 <template>
 <v-container class="p-0">
   <div class="d-flex flex-column align-center mt-5">
+    <div v-if="sortedEventos.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+      <div v-html="badWay"></div>
+      Encara no hi han events que mostrar
+    </div>
     <div v-for="(evento, index) in sortedEventos" :key="index" class="d-flex flex-column align-start justify-center p-4 mb-4 box-evento">
       <div class="d-flex justify-space-between align-center p-0 w-100">
         <p class="p-evento m-0" >Event</p>
-        <div class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
+        <div v-if="store.state.role!=='ROLE_USER'" class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
           <button v-if="showActions[index]" @click="toggleShowImg(index)" class="acciones-evento " href="#"><i class="mdi mdi-dots-vertical" ></i></button>
           <button v-if="!showActions[index]" @click="editEvent(evento.idEvento, evento.titulo, evento.contenido, evento.pagos, evento.tienePago, evento.fechaEvento)" class="acciones-evento " href="#"><i class="mdi mdi-pencil-outline" ></i></button>
           <button v-if="!showActions[index]" @click="deleteEvent(evento.idEvento)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
         </div>
 
       </div>
-      <div class="w-100  mt-5">
+      <div class="w-100  mt-8">
         <p class="fecha-evento">{{formatearFecha(evento.fechaEvento)}}</p>
       </div>
-      <div class="info-evento d-flex flex-column p-0 mt-1 ">
-        <p class="TituloS m-0">{{evento.titulo}}</p>
-        <p v-if="evento.contenido" class="parrafosReg m-0 mt-1">{{evento.contenido}}</p>
+      <div class="info-evento d-flex flex-column p-0 mt-2 ">
+        <p class="tituloS m-0">{{evento.titulo}}</p>
+        <p v-if="evento.contenido" class="parrafosReg m-0 mt-2 color">{{evento.contenido}}</p>
       </div>
 
-      <div class="d-flex align-center varios-chips mt-2">
+      <div class="d-flex align-center varios-chips mt-4">
         <p class="chip">{{evento.participantes.length}} Asistentes</p>
         <p v-if="evento.tienePago " class="chip">{{ evento.pagos}}€</p>
         <p v-if="evento.tienePago  && evento.pagadores.includes(store.state.id)" class="chip-pago">Pagat</p>
         <p v-if=" evento.tienePago && !evento.pagadores.includes(store.state.id)" class="chip-pago" style="background-color: #FFF4F7; border: 2px solid #F0426C; color: #F0426C; ">No Pagat</p>
       </div>
-      <div class="d-flex align-start mt-3 textosS">
+      <div class="d-flex align-start mt-4 textosS">
         <p class="m-0">{{formatDateFooter(evento.fechaCreacion)}}</p>
       </div>
       <button class="btn d-flex col-sm-12 boton" @click="asistir(evento.idEvento)">
@@ -41,6 +45,7 @@
 <script setup>
 import {useStore} from "vuex";
 import {computed, ref} from "vue";
+import {badWay} from "@/utils/icons";
 import {formatDateFooter, parseFechaComentario, formatearFecha} from "@/utils/date";
 import {useRouter} from "vue-router";
 
@@ -134,7 +139,25 @@ const toggleShowImg = (index) => {
   border-radius: 8px;
 
 }
+.color{
+  color:#909DAD;
+}
+.badway{
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
 
+  color: #3D4C5E;
+  border: 1px #EBEEF2 solid;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 16px;
+  box-shadow: 0px 4px 6px -2px rgba(216, 226, 248, 0.3);
+  border-radius: 8px;
+}
 
 .acciones-evento{
 

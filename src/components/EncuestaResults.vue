@@ -1,7 +1,7 @@
 <template>
   <v-container class="p-0">
     <div class="d-flex flex-column align-center mt-5">
-      <div v-if="sortedEncuestas.length === 0"  class="badway text-center d-flex flex-column">
+      <div v-if="sortedEncuestas.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
         <div v-html="badWay"></div>
         Encara no hi han enquestes que mostrar
       </div>
@@ -19,11 +19,16 @@
           <p class="tituloS m-0">{{encuesta.titulo}}</p>
         </div>
         <div class="d flex mt-3">
-          <div v-for="(respuesta, respIndex) in encuesta.opciones" :key="respIndex" class="form-check mb-3">
-            <input :value="respuesta" class="form-check-input custom-checkbox " type="checkbox" :checked="respuestaSeleccionada[index] === respIndex" @change="toggleCheckbox(index, respIndex, respuesta, encuesta.idEncuesta)">
-            <label class="form-check-label ml-2 color" for="myCheckbox">
+          <div v-for="(respuesta, respIndex) in encuesta.opciones" :key="respIndex" class="mb-3 d-flex">
+            <v-chip
+                class="custom-chip"
+                color="grey"
+            >
+              <p class="m-0 ">{{contarRepeticiones(encuesta.respuestas)[respIndex]?? '0%'}}</p>
+            </v-chip>
+            <p class=" ml-2 w-50" >
               {{respuesta}}
-            </label>
+            </p>
           </div>
         </div>
 
@@ -38,17 +43,6 @@
         <div class="d-flex align-start mt-3 textosS">
           <p class="m-0">{{formatDateFooter(encuesta.fechaCreacion)}}</p>
         </div>
-        <button class="btn d-flex col-sm-12 boton" @click="reactEncuesta(index, encuesta.respuestas)">
-          Votar
-          <v-progress-circular
-              v-if="loading && showLoader[index]"
-              indeterminate
-              color=" var(--dl-color-miostodos-moradoprincipal)"
-              :width="2"
-              :size="15"
-              class="ml-3"
-          ></v-progress-circular>
-        </button>
       </div>
     </div>
 
@@ -86,22 +80,7 @@ const sortedEncuestas = computed(() => {
     return dateB - dateA;
   });
 });
-const reactEncuesta= (index, respuestas)=> {
-  showLoader.value[index] = !showLoader.value[index];
-  console.log(contarRepeticiones(respuestas))
-  loading.value = true
-  store.dispatch('reactEncuesta', g.value).then(()=>{
-    g.value = {
-      id: '',
-      respuesta: '',
-    }
-    store.dispatch('getUserData').then(()=>{
-      loading.value = false
-    })
 
-  })
-
-}
 function contarRepeticiones(array) {
   const conteo = {};
   const total = array.length;
@@ -115,12 +94,12 @@ function contarRepeticiones(array) {
     }
   }
 
-  const porcentajes = {};
+  const porcentajes = [];
 
   for (const elemento in conteo) {
     const cantidad = conteo[elemento];
     const porcentaje = Math.round((cantidad / total) * 100);
-    porcentajes[elemento] = `${porcentaje}%`;
+    porcentajes.push(`${porcentaje}%`) ;
   }
 
   return porcentajes;
@@ -149,16 +128,6 @@ const deleteEncuesta = (idEncuesta)=>{
 const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };
-const toggleCheckbox = (eventoIndex, respuestaIndex, respuesta, idEncuesta) => {
-  respuestaSeleccionada.value = {
-    ...respuestaSeleccionada.value,
-    [eventoIndex]: respuestaIndex,
-  };
-  g.value = {
-    id: idEncuesta,
-    respuesta: respuesta,
-  }
-};
 
 </script>
 
@@ -175,9 +144,7 @@ const toggleCheckbox = (eventoIndex, respuestaIndex, respuesta, idEncuesta) => {
   border-radius: 8px;
   cursor: pointer;
 }
-.color{
-  color:#909DAD;
-}
+
 .badway{
   font-weight: 500;
   font-size: 18px;

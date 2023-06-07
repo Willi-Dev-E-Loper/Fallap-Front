@@ -149,7 +149,7 @@ const addComent = () => {
         });
         store.dispatch('getUserData');
       } else {
-        coment.append("idFalla", params.idFalla);
+        coment.append("idFalla", store.state.falla.idFalla ?? params.idFalla);
 
         store.dispatch("postNewComent", coment).then((res) => {
           loading.value=false

@@ -27,6 +27,7 @@ export const store = createStore({
             isLoged: false,
             idFalla:null,
             idNoticia:null,
+            noticias:null
 
         }
     },
@@ -90,6 +91,9 @@ export const store = createStore({
         },
         setIdNoticia(state, payload){
             state.idNoticia = payload
+        },
+        setNoticias(state, payload){
+            state.noticias = payload
         }
 
     },
@@ -103,7 +107,7 @@ export const store = createStore({
                         commit('setName', userData.nombre);
                         commit('setSurname', userData.apellidos);
                         commit('setEmail', userData.email);
-                        commit('setRole', userData.roles);
+                        commit('setRole', userData.roles[0]);
                         commit('setDescripcion', userData.descripcion);
                         commit('setPhone', userData.telefono);
                         commit('setFalla', userData.falla);
@@ -132,7 +136,6 @@ export const store = createStore({
                 commit('setToken',token)
                 commit('setExpiration', jwt.exp)
                 sessionStorage.setItem("token", token);
-
                 return response.data;
             } catch (error) {
                 console.log(error);
@@ -146,6 +149,21 @@ export const store = createStore({
                     .then((res) => {
                         let fallas = res.data;
                         commit('setFallas2Select', fallas);
+                        resolve(); // Resuelve la promesa sin ningún valor adicional
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        reject(err); // Rechaza la promesa con el error recibido
+                    });
+            });
+        },
+        getNoticias({ commit, state }) {
+            return new Promise((resolve, reject) => {
+                axios.get('http://localhost:8000/api/falla/noticias')
+                    .then((res) => {
+                        console.log(res.data)
+                        let fallas = res.data;
+                        commit('setNoticias', fallas);
                         resolve(); // Resuelve la promesa sin ningún valor adicional
                     })
                     .catch((err) => {

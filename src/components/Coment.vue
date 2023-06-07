@@ -1,19 +1,23 @@
 <template>
   <v-container class="p-0">
     <div class="d-flex flex-column align-center mt-5">
+        <div v-if="sortedComentarios.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+          <div v-html="badWay"></div>
+          Encara no hi han comentaris que mostrar
+        </div>
       <div v-for="(coment, index) in sortedComentarios" :key="index" class="d-flex flex-column align-start justify-center p-4 mb-4 box-evento" >
         <div class="d-flex justify-space-between align-center p-0 w-100">
           <p class="p-evento m-0 textosM">Comentari</p>
-          <div class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
+          <div v-if="store.state.role!=='ROLE_USER'" class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
             <button v-if="showActions[index]" @click="toggleShowImg(index)" class="acciones-evento " href="#"><i class="mdi mdi-dots-vertical" ></i></button>
             <button v-if="!showActions[index]" @click="editComent(coment.idComentario, coment.contenido)" class="acciones-evento " href="#"><i class="mdi mdi-pencil-outline" ></i></button>
             <button v-if="!showActions[index]" @click="deleteComent(coment.idComentario)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
           </div>
         </div>
-        <div v-if="coment.imagen">
+        <div v-if="coment.imagen" class="mt-2">
           <img :src="'http://localhost:8000/uploads/brochures/' + coment.imagen" alt="imagen-comentario">
         </div>
-        <div class="info-evento d-flex flex-column p-0 mt-1">
+        <div class="info-evento d-flex flex-column p-0 mt-4">
           <p class="textosReg m-0">{{ coment.contenido }}</p>
         </div>
         <div class="d-flex align-start mt-3 textosS">
@@ -28,6 +32,8 @@ import {useStore} from "vuex";
 import {computed, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
+import {badWay} from "@/utils/icons";
+
 const router = useRouter()
 const store = useStore()
 let showActions = ref([])
@@ -86,7 +92,22 @@ const deleteComent = (idComent)=>{
   cursor: pointer;
 }
 
+.badway{
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
 
+  color: #3D4C5E;
+  border: 1px #EBEEF2 solid;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 16px;
+  box-shadow: 0px 4px 6px -2px rgba(216, 226, 248, 0.3);
+  border-radius: 8px;
+}
 .acciones-evento{
 
   color: #909DAD;

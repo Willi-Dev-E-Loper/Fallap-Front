@@ -16,9 +16,10 @@
         <v-chip
             v-for="(premi, index) in premios"
             class="mb-2 mt-1 pil"
+
             border="none"
-            closable
-            @click:close="deletePremio(index)"
+            append-icon="mdi mdi-close-circle"
+            @click="deletePremio(index)"
 
             variant="text">
 
@@ -85,22 +86,23 @@
           clearable
       ></v-select>
 
-
-      <button class="btn d-flex col-sm-12 boton" @click="setPremio" >
-        Afegir premi
-      </button>
       <v-progress-linear
           v-if="loading"
           indeterminate
           rounded
           color="var(--dl-color-miostodos-moradoprincipal)"
+          class="mb-2"
       ></v-progress-linear>
+      <button class="btn d-flex col-sm-12 boton" @click="setPremio" >
+        Afegir premi
+      </button>
+
     </div>
     <nav-mobile></nav-mobile>
 
   </div>
   <div v-if="boxMsg" class="box-message-wrapper">
-    <box-message :card="card"></box-message>
+    <box-message :card="card"  @avanzar="realizarAccionAvanzar(index)" @cancelar="realizarAccionCancelar"></box-message>
   </div>
 </template>
 
@@ -117,7 +119,7 @@ let premis= ref([{premio:'Millor Falla', id: 1},{premio:'Millor Ninot', id:2},{p
 let secciones= ref([{seccion:'Secció Especial', id: 1},{seccion:'Primera Secció', id:2},{seccion:'Segona Secció', id:3},{seccion:'Tercera Secció', id:4},{seccion:'Cuarta Secció', id:5}])
 let monuments= ref([{monument:'Major', id: 1},{monument:'Infantil', id:2}])
 let posiciones= ref([{posicion:'1er premi ', id: 1},{posicion:'2on premi', id:2},{posicion:'3er premi', id: 3},{posicion:'Sense premi', id:4}])
-
+let idx = ref()
 const store = useStore()
 const premios = computed(() => {
   if (store.state.falla) {
@@ -137,7 +139,7 @@ let monumentoSeleccionado = ref()
 let posicionSeleccionado = ref()
 let loading = ref(false)
 let boxMsg = ref(false)
-const card={
+let card=ref({
   icono: premioAdd,
   titulo:'Premi actualitzat correctament!',
   mensage: '',
@@ -145,14 +147,31 @@ const card={
   boton: 'Tornar al home',
   boton1: '',
   boton2: ''
-}
+})
 const deletePremio = (index) => {
+  idx.value = index
+  console.log(idx.value)
+  card.value={
+    icono: premioAdd,
+    titulo:'Estas segur de que vols borrar el premi?',
+    mensage: '',
+    type:'warn',
+    boton: '',
+    boton1: 'No',
+    boton2: 'Si'
+  }
+boxMsg.value= true
 
-  console.log(index)
-  store.dispatch('unsetPremio', {indice: index, falla: store.state.falla.idFalla}).then(()=>{
-    store.dispatch('getUserData')
-
+}
+const realizarAccionAvanzar = () =>{
+  store.dispatch('unsetPremio', {indice: idx.value, falla: store.state.falla.idFalla}).then(()=>{
+    store.dispatch('getUserData').then(()=>{
+      boxMsg.value = false
+    })
   })
+}
+const realizarAccionCancelar = () => {
+  boxMsg.value = false
 }
 function goBack(){router.back()}
 
@@ -182,6 +201,14 @@ function setPremio(){
 </script>
 
 <style scoped>
+.box-message-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
 .container-fluid {
   font-family: 'Inter', sans-serif;
   border: 1px solid blue;

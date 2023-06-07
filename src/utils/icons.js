@@ -81,29 +81,39 @@ export const exitNav = '<svg width="24" height="24" viewBox="0 0 24 24" fill="no
 export const wallNav = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
     '<path d="M16.3945 9.01495C16.4097 9.03471 16.4248 9.05443 16.4398 9.07412C17.868 10.968 19.1616 12.6926 18.9836 15.5387L18.9831 15.5474L18.9827 15.5561C18.8022 19.5589 15.546 22.8065 11.7003 22.9927C9.42863 23.0855 7.52305 22.2926 6.18099 20.9197C4.83358 19.5413 4 17.5211 4 15.0767C4 13.0145 4.85204 11.1293 5.96947 9.18948L6.10773 9.40338C6.52782 10.1588 6.95653 10.8231 7.39584 11.3895L7.42966 11.4331L7.46806 11.4727C7.87364 11.891 8.50015 12.0722 9.08081 11.8C9.62633 11.5443 9.89782 10.9956 9.89782 10.4619V10.4297L9.89574 10.3974C9.64504 6.51877 11.2506 3.29341 13.1198 1.50864C13.3787 5.07579 14.9905 7.181 16.3945 9.01495Z" stroke="#3D4C5E" stroke-width="2"/>\n' +
     '</svg>\n'
-export const botones= ref([
-    {
-        icono:logoPremio,
-        texto: 'Primer premi',
-        accion: 'goCreate()',
-        subTexto: 'Secció especial Gandia',
-        logoRight: logoRight
-
-    },
-    {
-        icono: logoPremio,
-        texto: '5é Premi',
-        accion: 'goCreate()',
-        subTexto: 'Millor Llibret de Gandia',
-        logoRight: logoRight
-    },
-    {
-        icono:logoPremio,
-        texto: '12é Premi',
-        accion: 'goCreate()',
-        subTexto: 'Falla Infantil de Gandia',
-        logoRight: logoRight
-    },
-
-
-])
+export const badWay = '<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+    '<path d="M26.6666 26.6667C26.6666 26.6667 24.1666 23.3333 19.9999 23.3333C15.8333 23.3333 13.3333 26.6667 13.3333 26.6667M14.9999 15H15.0166M24.9999 15H25.0166M36.6666 20C36.6666 29.2047 29.2047 36.6667 19.9999 36.6667C10.7952 36.6667 3.33325 29.2047 3.33325 20C3.33325 10.7953 10.7952 3.33333 19.9999 3.33333C29.2047 3.33333 36.6666 10.7953 36.6666 20Z" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+    '</svg>\n'
+export const addUsericon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+    '<path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M20 8V14M23 11H17M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7Z" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '</svg>'
+export const addUserCsv =  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+    '<path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M20 8V14M23 11H17M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7Z" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '</svg>'
+export const addAdmin = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+    '<path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M20 8V14M23 11H17M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7Z" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '</svg>'
+export const addPremio = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M8.21 13.89L7 23L12 20L17 23L15.79 13.88M19 8C19 11.866 15.866 15 12 15C8.13401 15 5 11.866 5 8C5 4.13401 8.13401 1 12 1C15.866 1 19 4.13401 19 8Z" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const addFalla = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M11.7395 17.125V22.025M6.93954 17.125V22.025C0.139541 17.925 2.33954 12.725 2.33954 12.725L4.83954 12.125C4.83954 12.125 3.33954 11.225 3.03954 10.425C6.43954 4.825 9.53954 2.925 10.9395 2.225C11.4395 1.925 12.1395 1.925 12.6395 2.225C14.0395 2.925 17.0395 4.825 20.4395 10.425C20.1395 11.225 18.6395 12.125 18.6395 12.125L21.1395 12.725C21.1395 12.725 23.3395 17.925 16.5395 22.025V17.125" stroke="#3D4C5E" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const updateFalla =  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M11.7395 17.125V22.025M6.93954 17.125V22.025C0.139541 17.925 2.33954 12.725 2.33954 12.725L4.83954 12.125C4.83954 12.125 3.33954 11.225 3.03954 10.425C6.43954 4.825 9.53954 2.925 10.9395 2.225C11.4395 1.925 12.1395 1.925 12.6395 2.225C14.0395 2.925 17.0395 4.825 20.4395 10.425C20.1395 11.225 18.6395 12.125 18.6395 12.125L21.1395 12.725C21.1395 12.725 23.3395 17.925 16.5395 22.025V17.125" stroke="#3D4C5E" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const addNotice = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8M14 2L20 8M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const updateLlibret = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M12 7C12 5.93913 11.5786 4.92172 10.8284 4.17157C10.0783 3.42143 9.06087 3 8 3H2V18H9C9.79565 18 10.5587 18.3161 11.1213 18.8787C11.6839 19.4413 12 20.2044 12 21M12 7V21M12 7C12 5.93913 12.4214 4.92172 13.1716 4.17157C13.9217 3.42143 14.9391 3 16 3H22V18H15C14.2044 18 13.4413 18.3161 12.8787 18.8787C12.3161 19.4413 12 20.2044 12 21" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const addPay = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M11.7395 17.125V22.025M6.93954 17.125V22.025C0.139541 17.925 2.33954 12.725 2.33954 12.725L4.83954 12.125C4.83954 12.125 3.33954 11.225 3.03954 10.425C6.43954 4.825 9.53954 2.925 10.9395 2.225C11.4395 1.925 12.1395 1.925 12.6395 2.225C14.0395 2.925 17.0395 4.825 20.4395 10.425C20.1395 11.225 18.6395 12.125 18.6395 12.125L21.1395 12.725C21.1395 12.725 23.3395 17.925 16.5395 22.025V17.125" stroke="#3D4C5E" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const showEncuestasicon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8M14 2L20 8M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'
+export const create =  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M12 5V19M5 12H19" stroke="#3D4C5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'</svg>'

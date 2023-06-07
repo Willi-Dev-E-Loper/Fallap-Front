@@ -11,8 +11,9 @@
         <h1>Importar usuaris CSV</h1>
       </div>
 
-
+      <v-form   @submit.prevent="submitCsv" ref="form" class="p-0">
       <v-select
+          v-if="store.state.role==='ROLE_SUPER_ADMIN'"
           class="mt-4  p-0 custom-select "
           v-model="fallaSeleccionada"
           :items="fallas"
@@ -25,18 +26,23 @@
 
           clearable
       ></v-select>
-      <v-file-input
-          v-model="csv"
-          class="mt-4  p-0 custom-select "
-          clearable
-          chips
-          label="Archiu .csv"
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi mdi-paperclip"
-          density="comfortable"
-      ></v-file-input>
-      <button class="btn d-flex col-sm-12 boton" @click="submitCsv" >
+
+          <v-file-input
+              v-model="csv"
+              accept=".csv"
+              :rules=" [v => (v && v.length > 0) || 'El camp archiu csv no pot estar buit']"
+              class="mt-4  p-0 custom-select "
+              clearable
+              chips
+              label="Archiu .csv"
+              variant="outlined"
+              prepend-icon=""
+              prepend-inner-icon="mdi mdi-paperclip"
+              density="comfortable"
+          ></v-file-input>
+
+
+      <button class="btn d-flex col-sm-12 boton w-100"  >
         Importar usuaris
       </button>
       <v-progress-linear
@@ -45,6 +51,7 @@
           rounded
           color="var(--dl-color-miostodos-moradoprincipal)"
       ></v-progress-linear>
+      </v-form>
     </div>
     <nav-mobile></nav-mobile>
 
@@ -86,64 +93,72 @@ let card = ref({
   boton1: 'No, enrere',
   boton2: 'Si, avant!'
 })
-
+const idF= computed(() => {
+  if (store.state.falla){
+    return store.state.falla.idFalla
+  }
+});
 const realizarAccionAvanzar = ()=> {
   console.log('asdasd')
   let formData = new FormData()
   if(csv.value){
+    const idFalla = store.state.role==='ROLE_SUPER_ADMIN' ? fallaSeleccionada.value  : idF.value
     formData.append('csv', csv.value[0])
+    formData.append('idFalla', idFalla )
+    store.dispatch('postNewCsv', formData).then((res)=>{
 
+      if(!res.ok){
+        loading.value = true
+        card.value={
+          icono: userAdd,
+          titulo:'Oh oh, algo no ixit com esperava!',
+          mensage: '',
+          type:'',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        }
+        setTimeout(()=>{boxMsg.value=false},3000)
+        setTimeout(()=>{ loading.value = false},3000)
+        setTimeout(()=>{ card.value = {
+          icono: userAdd,
+          titulo: 'Importar usuaris',
+          mensage: 'Estic segur de que vull importar aquests usuaris a la falla',
+          type: 'warn',
+          boton: '',
+          boton1: 'No, enrere',
+          boton2: 'Si, avant!'
+        }},4000)
+
+      }else{
+        card.value={
+          icono: userAdd,
+          titulo:'Usuaris importats correctament!',
+          mensage: '',
+          type:'success',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        }
+        store.dispatch('getUserData')
+        console.log((res))
+      }
+
+
+    })
   }
-  formData.append('idFalla',fallaSeleccionada.value)
-  store.dispatch('postNewCsv', formData).then((res)=>{
 
-    if(!res.ok){
-      loading.value = true
-      card.value={
-        icono: userAdd,
-        titulo:'Oh oh, algo no ixit com esperava!',
-        mensage: '',
-        type:'',
-        boton: 'Tornar al home',
-        boton1: '',
-        boton2: ''
-      }
-      setTimeout(()=>{boxMsg.value=false},3000)
-      setTimeout(()=>{ loading.value = false},3000)
-      setTimeout(()=>{ card.value = {
-        icono: userAdd,
-        titulo: 'Importar usuaris',
-        mensage: 'Estic segur de que vull importar aquests usuaris a la falla',
-        type: 'warn',
-        boton: '',
-        boton1: 'No, enrere',
-        boton2: 'Si, avant!'
-      }},4000)
-
-    }else{
-      card.value={
-        icono: userAdd,
-        titulo:'Usuaris importats correctament!',
-        mensage: '',
-        type:'success',
-        boton: 'Tornar al home',
-        boton1: '',
-        boton2: ''
-      }
-      store.dispatch('getUserData')
-      console.log((res))
-    }
-
-
-  })
 }
 const realizarAccionCancelar = ()=> {
   boxMsg.value = false
 }
 
-function goBack(){router.back()}
+function goBack(){ router.back()}
 const submitCsv = ()=>{
-  boxMsg.value = true
+  if(csv.value){
+
+    boxMsg.value = true
+  }
 
 }
 function toggleCheckbox() {

@@ -7,13 +7,14 @@
     </button>
     <div class="panel-super-admin  row">
 
-      <div class="titulo p-0">
+      <div class="titulo p-0 mb-4">
         <h1>Afegir usuari</h1>
       </div>
 
-
+      <v-form   @submit.prevent="submitUser" ref="form" class="p-0">
       <v-select
-          class="mt-4 col-sm-12 p-0 custom-input"
+          v-if="store.state.role==='ROLE_SUPER_ADMIN'"
+          class="mt-1 col-sm-12 p-0 custom-input"
           v-model="fallaSeleccionada"
           :items="fallas"
           item-value="idFalla"
@@ -30,6 +31,7 @@
           class="mt-1 col-sm-12 p-0 custom-input"
           label="Nom de l'usuari/a"
           v-model="nombre"
+          :rules="[v => !!v || 'El camp nom no pot estar buit']"
           prepend-inner-icon="mdi mdi-account-outline"
           density="comfortable"
           variant="outlined"
@@ -41,7 +43,8 @@
           density="comfortable"
           label="Any de naixement"
           v-model="fechaNacimiento"
-          prepend-inner-icon="mdi mdi-calendar-range"
+          type="date"
+          :rules="[v => !!v || 'El camp data no pot estar buit']"
           placeholder="--/--/--"
           variant="outlined"
           color="var(--dl-color-miostodos-moradoprincipal)"
@@ -52,24 +55,26 @@
           label="E-mail de l'usuari/a"
           prepend-inner-icon="mdi mdi-email-outline"
           density="comfortable"
+          :rules="[v => !!v || 'El e-mail data no pot estar buit']"
+
           v-model="email"
           variant="outlined"
           color="var(--dl-color-miostodos-moradoprincipal)"
 
       ></v-text-field>
 
-
-      <button class="btn d-flex col-sm-12 boton" @click="submitUser">
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
+        ></v-progress-linear>
+      <button class="btn d-flex col-sm-12 boton w-100" >
         Crear l'usuari
-
-
       </button>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
+
+      </v-form>
     </div>
     <nav-mobile></nav-mobile>
 
@@ -83,7 +88,7 @@
 import {onBeforeMount, ref, computed} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
-import {userAdd} from "@/utils/icons";
+import {comentAdd, userAdd} from "@/utils/icons";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 
@@ -93,7 +98,7 @@ let nombre = ref("")
 let fechaNacimiento = ref("")
 let email = ref("")
 let boxMsg = ref(false)
-const card={
+let card=ref({
   icono: userAdd,
   titulo:'Usuari afegit!',
   mensage: '',
@@ -101,31 +106,75 @@ const card={
   boton: 'Tornar al home',
   boton1: '',
   boton2: ''
-}
+})
 const loading = ref(false); // Variable reactiva para controlar la visibilidad del logo de carga
 
 
 const fallas= computed(() => {
   return store.state.fallas2select
 });
+const idF= computed(() => {
+  if (store.state.falla){
+    return store.state.falla.idFalla
+  }
+});
 let fallaSeleccionada=ref()
 
 
 function submitUser(){
-  loading.value = true; // Muestra el logo de carga al iniciar la solicitud
+   // Muestra el logo de carga al iniciar la solicitud
+  const handleError = () => {
+
+    card.value = {
+      icono: userAdd,
+      titulo: 'Oh oh, algo no ha ixit com esperava!',
+      mensage: '',
+      type: '',
+      boton: 'Tornar al home',
+      boton1: '',
+      boton2: ''
+    };
+    boxMsg.value = true;
+    setTimeout(() => {
+      boxMsg.value = false;
+    }, 3000);
+    setTimeout(() => {
+      loading.value = false;
+    }, 3000);
+    setTimeout(() => {
+      card.value = {
+        icono: userAdd,
+        titulo:'Usuari afegit!',
+        mensage: '',
+        type:'success',
+        boton: 'Tornar al home',
+        boton1: '',
+        boton2: ''
+      };
+    }, 4000);
+  };
 
   let user = {
     nombre: nombre.value,
-    falla: fallaSeleccionada.value.idFalla,
+    falla: store.state.role==='ROLE_SUPER_ADMIN' ? fallaSeleccionada.value.idFalla  : idF.value,
     email: email.value,
   }
-  store.dispatch('postNewUser',user).then(()=>{
-    loading.value = false; // Muestra el logo de carga al iniciar la solicitud
-    boxMsg.value= true
-  })
+  if(nombre.value && fechaNacimiento.value &&email.value){
+    loading.value = true;
+    store.dispatch('postNewUser',user).then((res)=>{
+      loading.value=false
+      console.log(res)
+      if (!res.ok) {
+        handleError();
+      } else {
+        boxMsg.value = true;
+      }
+    })
+  }
+
 }
 
-function goBack(){router.back()}
+function goBack(){ router.back()}
 </script>
 
 <style scoped>

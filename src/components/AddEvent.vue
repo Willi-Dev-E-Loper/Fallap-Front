@@ -11,82 +11,86 @@
       <div class="titulo p-0">
         <h1>{{params.titulo ? 'Editar event' : 'Crear event'}}</h1>
       </div>
-      <v-file-input
-          v-model="imagenEvento"
-          class="mt-4  p-0 custom-select "
-          clearable
-          chips
-          base-color="var(--dl-color-miostodos-moradoprincipal)"
-          label="Selecciona imatge per al event 1000x300px"
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi mdi-panorama-variant-outline"
-          density="comfortable"
-      ></v-file-input>
-      <v-text-field
-          v-model="tituloEvento"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Titol de l'event"
-          :rules="[v => !!v || 'El titol no pot estar buit']"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+      <v-form   @submit.prevent="submitEvent" ref="form" class="p-0">
+        <v-file-input
+            v-model="imagenEvento"
+            class="mt-4  p-0 custom-select "
+            clearable
+            chips
+            base-color="var(--dl-color-miostodos-moradoprincipal)"
+            label="Selecciona imatge per al event 1000x300px"
+            variant="outlined"
+            prepend-icon=""
+            prepend-inner-icon="mdi mdi-panorama-variant-outline"
+            density="comfortable"
+        ></v-file-input>
+        <v-text-field
+            v-model="tituloEvento"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Titol de l'event"
+            :rules="[v => !!v || 'El titol no pot estar buit']"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-      ></v-text-field>
-      <v-text-field
-          v-model="fechaEvento"
-          class="mt-1 col-sm-12 p-0 custom-input date-input"
-          density="comfortable"
-          label="Data de l'event"
-          type="date"
-          :rules="[v => !!v || 'El titol no pot estar buit']"
-          placeholder="--/--/--"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          style="color:rgb(61 76 94 / 64%);"
+        ></v-text-field>
+        <v-text-field
+            v-model="fechaEvento"
+            class="mt-1 col-sm-12 p-0 custom-input date-input"
+            density="comfortable"
+            label="Data de l'event"
+            type="date"
+            :rules="[v => !!v || 'El titol no pot estar buit']"
+            placeholder="--/--/--"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            style="color:rgb(61 76 94 / 64%);"
 
-      ></v-text-field>
-      <v-textarea
-          v-model="descripcionEvento"
-          label="Descripciò de l'event"
-          placeholder="Introdueix  ací la informaciò de l'event"
-          auto-grow
-          counter
-          variant="outlined"
-          rows="3"
-          row-height="25"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-textarea
+            v-model="descripcionEvento"
+            label="Descripciò de l'event"
+            placeholder="Introdueix  ací la informaciò de l'event"
+            auto-grow
+            counter
+            variant="outlined"
+            rows="3"
+            row-height="25"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            color="var(--dl-color-miostodos-moradoprincipal)"
 
-          shaped
-      ></v-textarea>
-      <div class="form-check ">
-        <input  class="form-check-input custom-checkbox" type="checkbox" :checked="tienePago" @change="toggleCheckbox">
-        <label class="form-check-label custom-input" for="myCheckbox">
-          Aquest event inclou pagament
-        </label>
-      </div>
-      <v-text-field
-          v-if="tienePago"
-          v-model="importe"
-          type="number"
-          class="mt-2 col-sm-12 p-0 custom-input "
-          density="comfortable"
-          label="Intudueix l'import"
-          append-icon="mdi mdi-currency-eur"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          class="mb-2"
-      ></v-progress-linear>
-      <button class="btn d-flex col-sm-12 boton" @click="submitEvent">
-        {{params.titulo ? 'Editar event' : 'Crear event'}}
-      </button>
+            shaped
+        ></v-textarea>
+        <div class="form-check ">
+          <input  class="form-check-input custom-checkbox" type="checkbox" :checked="tienePago" @change="toggleCheckbox">
+          <label class="form-check-label custom-input" for="myCheckbox">
+            Aquest event inclou pagament
+          </label>
+        </div>
+        <v-text-field
+            v-if="tienePago"
+            v-model="importe"
+            type="number"
+            class="mt-2 col-sm-12 p-0 custom-input "
+            density="comfortable"
+            label="Introdueix l'import"
+            append-icon="mdi mdi-currency-eur"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
+        ></v-progress-linear>
+        <button class="btn d-flex col-sm-12 w-100 boton" >
+          {{params.titulo ? 'Editar event' : 'Crear event'}}
+        </button>
+      </v-form>
+
+
 
     </div>
 
@@ -133,7 +137,7 @@ let card=ref({
 
 function submitEvent(){
 
-  loading.value=true
+
   store.commit("setIdEvent", idEvent.value);
   let formdata = new FormData()
   if(imagenEvento.value){
@@ -176,28 +180,32 @@ function submitEvent(){
   };
 
   //console.log(store.state.falla.idFalla)
-  if(idEvent.value){
-    store.dispatch('putEvent',formdata).then((res) => {
-      loading.value=false
-      if (!res.ok) {
-        handleError();
-      } else {
-        boxMsg.value = true;
-      }
-    });
-    store.dispatch('getUserData');
-  }else{
-    formdata.append('idFalla', store.state.falla.idFalla)
-    store.dispatch('postNewEvent',formdata).then((res) => {
-      loading.value=false
-      if (!res.ok) {
-        handleError();
-      } else {
-        boxMsg.value = true;
-      }
-    });
-    store.dispatch('getUserData');
+  if(tituloEvento.value && fechaEvento.value){
+    loading.value=true
+    if(idEvent.value){
+      store.dispatch('putEvent',formdata).then((res) => {
+        loading.value=false
+        if (!res.ok) {
+          handleError();
+        } else {
+          boxMsg.value = true;
+        }
+      });
+      store.dispatch('getUserData');
+    }else{
+      formdata.append('idFalla', store.state.falla.idFalla)
+      store.dispatch('postNewEvent',formdata).then((res) => {
+        loading.value=false
+        if (!res.ok) {
+          handleError();
+        } else {
+          boxMsg.value = true;
+        }
+      });
+      store.dispatch('getUserData');
+    }
   }
+
 }
 
 function toggleCheckbox() {

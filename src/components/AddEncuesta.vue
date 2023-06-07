@@ -11,70 +11,78 @@
       <div class="titulo p-0">
         <h1>{{params.idEncuesta ? 'Editar enquesta' :'Crear enquesta'}}</h1>
       </div>
-
-      <v-text-field
-          v-model="pregunta"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Pregunta"
-          :rules="[v => !!v || 'La pregunta no pot estar vuida']"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-      ></v-text-field>
-      <v-text-field
-          v-model="respuesta"
-          class="mt-1 col-sm-12 p-0 custom-input "
-          density="comfortable"
-          :rules="[v => !!v || 'Fan falta al menys dos respostes']"
-          label="Contestaciò"
-          prepend-inner-icon="mdi mdi-circle-small"
-          placeholder="Si"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-      <div v-for="(field, index) in fields" :key="index" class="p-0">
-
+      <v-form   @submit.prevent="addEncuesta" ref="form" class="p-0">
         <v-text-field
-            class="mt-1 col-sm-12 p-0 custom-input "
+            v-model="pregunta"
+            class="mt-1 col-sm-12 p-0 custom-input"
+            label="Pregunta"
+            :rules="[v => !!v || 'La pregunta no pot estar vuida']"
             density="comfortable"
-            label="Contestaciò"
-            prepend-inner-icon="mdi mdi-circle-small"
-            :rules="[v => !!v || 'Fan falta al menys dos respostes']"
-            placeholder="No"
             variant="outlined"
             color="var(--dl-color-miostodos-moradoprincipal)"
-            v-model="field.value"
-            clearable
-            @click:clear="removeField(index)"
+
         ></v-text-field>
+        <v-text-field
+            v-model="respuesta"
+            class="mt-1 col-sm-12 p-0 custom-input "
+            density="comfortable"
+            :rules="[v => !!v || 'Fan falta al menys dos respostes']"
+            label="Contestaciò"
+            prepend-inner-icon="mdi mdi-circle-small"
+            placeholder="Si"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <div v-for="(field, index) in fields" :key="index" class="p-0">
 
-      </div>
-      <button class="btn d-flex  boton-1" @click="addField">
-        Afegir contestaciò
-      </button>
+          <v-text-field
+              class="mt-1 col-sm-12 p-0 custom-input "
+              density="comfortable"
+              label="Contestaciò"
+              prepend-inner-icon="mdi mdi-circle-small"
+              :rules="[v => !!v || '']"
+              placeholder="No"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+              v-model="field.value"
+              clearable
+              @click:clear="removeField(index)"
+              persistent-clear
+          ></v-text-field>
+
+        </div>
+        <div class="btn d-flex  boton-1" @click="addField">
+          Afegir contestaciò
+        </div>
 
 
 
-      <v-text-field
-          v-model="fechaCaducidad"
-          class="mt-4 col-sm-12 p-0 custom-input "
-          density="comfortable"
-          label="Data de finalització"
-          placeholder="--/--/--"
-          prepend-inner-icon="mdi mdi-calendar-range"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-      <button class="btn d-flex col-sm-12 boton" @click="addEncuesta">
-        {{params.contenido ? 'Editar enquesta' : 'Crear enquesta'}}
-      </button>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
+        <v-text-field
+            v-model="fechaCaducidad"
+            type="date"
+            class="mt-6 col-sm-12 p-0 custom-input "
+            density="comfortable"
+            label="Data de finalització"
+            :rules="[v => !!v || 'El camp data no pot estar buit']"
+
+            placeholder="--/--/--"
+            prepend-inner-icon="mdi mdi-calendar-range"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-text-field>
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
+        ></v-progress-linear>
+        <button type="submit" class="btn d-flex col-sm-12 w-100 boton" >
+          {{params.contenido ? 'Editar enquesta' : 'Crear enquesta'}}
+        </button>
+
+      </v-form>
+
     </div>
     <nav-mobile></nav-mobile>
 
@@ -136,13 +144,15 @@ const addEncuesta= ()=>{
 
   store.commit("setIdEncuesta", idEncuesta.value);
   const clonedFields = [...fields.value]; // Realiza una copia del array fields.value
+
   clonedFields.unshift({ value: respuesta.value });
 
   const respuestas = [];
   clonedFields.forEach((r) => {
-    respuestas.push(r.value);
+    if(r.value!==''){
+      respuestas.push(r.value);
+    }
   });
-
   const encuesta = {
     falla:store.state.falla.idFalla,
     pregunta: pregunta.value,
@@ -150,73 +160,79 @@ const addEncuesta= ()=>{
     fechaCreacion: dateNow(),
     fechaCaducidad: fechaCaducidad.value,
   }
-  console.log(encuesta)
-  if(idEncuesta.value){
-    store.dispatch('putEncuesta', encuesta).then((res)=>{
-      if (!res.ok){
+  console.log(respuestas.length)
+  if(pregunta.value && respuestas.length >= 2 && fechaCaducidad.value){
+    loading.value = true
+    if(idEncuesta.value){
+      store.dispatch('putEncuesta', encuesta).then((res)=>{
+        if (!res.ok){
 
-        card.value={
-          icono: encuestaAdd,
-          titulo:'Oh oh, algo no ha ixit com esperava!',
-          mensage: '',
-          type:'',
-          boton: 'Tornar al home',
-          boton1: '',
-          boton2: ''
-        }
-        setTimeout(()=>{boxMsg.value=false},3000)
-        setTimeout(()=>{ loading.value = false},3000)
-        setTimeout(()=>{ card.value = {
-          icono: encuestaAdd,
-          titulo:'Enquesta creada!',
-          mensage: '',
-          type:'success',
-          boton: 'Tornar al home',
-          boton1: '',
-          boton2: ''
-        }},4000)
-      }else {
-        boxMsg.value = true
-      }
-    })
-    store.dispatch('getUserData')
-
-  }else{
-    store.dispatch('postNewEncuesta', encuesta).then((res)=> {
-      if (!res.ok) {
-        boxMsg.value = true
-        card.value = {
-          icono: encuestaAdd,
-          titulo: 'Oh oh, algo no ha ixit com esperava!',
-          mensage: '',
-          type: '',
-          boton: 'Tornar al home',
-          boton1: '',
-          boton2: ''
-        }
-        setTimeout(() => {
-          boxMsg.value = false
-        }, 3000)
-        setTimeout(() => {
-          loading.value = false
-        }, 3000)
-        setTimeout(() => {
-          card.value = {
+          card.value={
             icono: encuestaAdd,
-            titulo: 'Enquesta creada!',
+            titulo:'Oh oh, algo no ha ixit com esperava!',
             mensage: '',
-            type: 'success',
+            type:'',
             boton: 'Tornar al home',
             boton1: '',
             boton2: ''
           }
-        }, 4000)
-      } else {
-        boxMsg.value = true
-      }
+          setTimeout(()=>{boxMsg.value=false},3000)
+          setTimeout(()=>{ loading.value = false},3000)
+          setTimeout(()=>{ card.value = {
+            icono: encuestaAdd,
+            titulo:'Enquesta creada!',
+            mensage: '',
+            type:'success',
+            boton: 'Tornar al home',
+            boton1: '',
+            boton2: ''
+          }},4000)
+        }else {
+          boxMsg.value = true
+        }
+      })
       store.dispatch('getUserData')
+      loading.value= false
 
-    })
+    }else{
+      store.dispatch('postNewEncuesta', encuesta).then((res)=> {
+        if (!res.ok) {
+          boxMsg.value = true
+          card.value = {
+            icono: encuestaAdd,
+            titulo: 'Oh oh, algo no ha ixit com esperava!',
+            mensage: '',
+            type: '',
+            boton: 'Tornar al home',
+            boton1: '',
+            boton2: ''
+          }
+          setTimeout(() => {
+            boxMsg.value = false
+          }, 3000)
+          setTimeout(() => {
+            loading.value = false
+          }, 3000)
+          setTimeout(() => {
+            card.value = {
+              icono: encuestaAdd,
+              titulo: 'Enquesta creada!',
+              mensage: '',
+              type: 'success',
+              boton: 'Tornar al home',
+              boton1: '',
+              boton2: ''
+            }
+          }, 4000)
+        } else {
+          boxMsg.value = true
+        }
+        store.dispatch('getUserData')
+        loading.value= false
+
+      })
+
+    }
 
 }}
 function goBack(){router.back()}

@@ -1,13 +1,13 @@
 <template>
-  <div class="container-fluid p-0">
+  <div v-if="falla" class="container-fluid p-0">
     <div class="panel-super-admin  row">
 
-      <div class="logo-fallap p-0">
-        <img src="../playground_assets/Logo%20Falla.svg" alt="logo-fallap">
+      <div class="logo-falla p-0 mb-3">
+        <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="logo falla" class="logo">
       </div>
 
       <p class="p-0 m-0">Falla</p>
-      <h1 class="p-0 m-0 falla">Beniopa</h1>
+      <h1 class="p-0 m-0 falla">{{ falla.nombre }}</h1>
       <v-tabs
           bg-color="#F0F3F6"
           color="#F0F3F6"
@@ -18,6 +18,7 @@
           grow
           rouded
           hide-slider
+          center-active
 
       >
         <v-tab size="x-large"  value="event" >Events</v-tab>
@@ -47,7 +48,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import AddUser from "@/components/AddUser.vue";
 import {useRouter} from "vue-router";
@@ -58,7 +59,11 @@ import {useStore} from "vuex";
 const router = useRouter()
 const store = useStore()
 let tab =ref()
+const falla = computed( () => {
 
+  return store.state.falla;
+
+});
 
 </script>
 
@@ -70,6 +75,9 @@ let tab =ref()
 .panel-super-admin{
   margin: 48px 24px 127px 24px;
 
+}
+.logo-falla img{
+  width: 100px;
 }
 .titulo{
 

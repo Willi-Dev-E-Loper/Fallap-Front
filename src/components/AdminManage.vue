@@ -47,15 +47,17 @@
           Es administrador?
         </label>
       </div>
-      <button class="btn d-flex col-sm-12 boton" @click="submitAdmin">
-        Actualitzar
-      </button>
       <v-progress-linear
           v-if="loading"
           indeterminate
           rounded
+          class="mb-2"
           color="var(--dl-color-miostodos-moradoprincipal)"
       ></v-progress-linear>
+      <button class="btn d-flex col-sm-12 boton" @click="submitAdmin">
+        Actualitzar
+      </button>
+
     </div>
     <nav-mobile></nav-mobile>
 

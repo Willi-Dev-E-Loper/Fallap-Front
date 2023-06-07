@@ -28,12 +28,23 @@ let theme= ['red', 'indigo', 'orange', 'primary', 'secondary', 'success', 'info'
 
 </script>
 
-<template>
-  <v-app>
-    <router-view></router-view>
-  </v-app>
+<template >
+  <div class="a">
+    <v-app class="b">
+      <router-view></router-view>
+    </v-app>
+  </div>
+
 </template>
 
 <style scoped>
-
+.a{
+  background-image: url("./playground_assets/Desktop - 6.jpg");
+  background-size: cover;
+}
+@media (min-width: 768px) {
+  .b{
+    margin: 0 258px 0 258px;
+  }
+}
 </style>

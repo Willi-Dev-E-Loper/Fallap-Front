@@ -1,22 +1,18 @@
 <template>
-  <div class="container-fluid p-0">
-    <div class="panel-super-admin  row">
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="panel-super-admin  row  {{isWideScreen ? 'w-75': ''}}">
 
-      <div class="logo-fallap p-0">
-        <img src="../playground_assets/Logo%20Falla.svg" alt="logo-fallap">
-      </div>
-
-      <p class="p-0 m-0">Falla</p>
-      <h1 class="p-0 m-0 falla">Beniopa</h1>
-    <notice class="p-0"></notice>
+      <h1 class="p-0 m-0 falla">Noticies<br> del món faller</h1>
+      <notice class="p-0 mt-6"></notice>
     </div>
 
   </div>
-  <nav-mobile></nav-mobile>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import AddUser from "@/components/AddUser.vue";
 import {useRouter} from "vue-router";
@@ -25,11 +21,27 @@ import Encuesta from "@/components/Encuesta.vue";
 import Coment from "@/components/Coment.vue";
 import Notice from "@/components/Notice.vue";
 import {useStore} from "vuex";
+import NavDesktop from "@/components/NavDesktop.vue";
 const router = useRouter()
 const store = useStore()
 let tab =ref()
+const falla = computed( () => {
 
+  return store.state.falla;
 
+});
+const isWideScreen = ref(window.innerWidth >= 768);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -41,12 +53,8 @@ let tab =ref()
   margin: 48px 24px 127px 24px;
 
 }
-.titulo{
-
-  font-weight: 600;
-  font-size: 28px;
-  line-height: 36px;
-  margin-top: 32px;
+.logo-falla img{
+  width: 100px;
 }
 .falla{
 
@@ -87,4 +95,6 @@ boton:hover{
   border: 1px #EBEEF2 solid;
 
 }
+
+
 </style>

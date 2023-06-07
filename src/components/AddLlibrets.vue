@@ -27,11 +27,12 @@
       </div>
 
       <p class="titulo2 mt-4 p-0">Afegir llibret</p>
-
+      <v-form   @submit.prevent="submitLlibret" ref="form" class="p-0">
       <v-text-field
           v-model="nombreLlibret"
           class="mt-1 col-sm-12 p-0 custom-input"
           label="Titol del llibret"
+          :rules="[v => !!v || 'El nom del llibret no pot estar buit']"
           prepend-inner-icon="mdi mdi-notebook-edit-outline"
           density="comfortable"
           placeholder="El foc de la vida"
@@ -44,6 +45,8 @@
           class="mt-1  p-0 custom-select "
           clearable
           chips
+          accept=".pdf"
+          :rules=" [v => (v && v.length > 0) || 'El camp llibret no pot estar buit']"
           base-color="var(--dl-color-miostodos-moradoprincipal)"
           label="Selecciona o arrastra el llibret ací"
           variant="outlined"
@@ -55,6 +58,7 @@
           v-model="anyLlibret"
           class="mt-1 col-sm-12 p-0 custom-input"
           label="Any del llibret"
+          :rules="[v => !!v || 'El any del llibret no pot estar buit']"
           prepend-inner-icon="mdi mdi-calendar-range"
           density="comfortable"
           variant="outlined"
@@ -63,7 +67,7 @@
 
 
 
-      <button class="btn d-flex col-sm-12 boton" @click="submitLlibret">
+      <button class="btn d-flex col-sm-12 boton w-100" >
         Afegir llibret
       </button>
       <v-progress-linear
@@ -72,7 +76,7 @@
           rounded
           color="var(--dl-color-miostodos-moradoprincipal)"
       ></v-progress-linear>
-
+      </v-form>
     </div>
     <nav-mobile></nav-mobile>
   </div>
@@ -118,50 +122,51 @@ let card=ref({
 function submitLlibret(){
 
   let formdata = new FormData()
-  if(llibret.value){
+  if(llibret.value && nombreLlibret.value && anyLlibret.value){
     formdata.append('llibret', llibret.value[0])
-  }
-  formdata.append('nombreLlibret', nombreLlibret.value)
-  formdata.append('fecha', anyLlibret.value)
-  formdata.append('falla', store.state.falla.idFalla)
-  const handleError = () => {
-    boxMsg.value = true;
-    card.value = {
-      icono: llibretAdd,
-      titulo: 'Oh oh, algo no ha ixit com esperava!',
-      mensage: '',
-      type: '',
-      boton: 'Tornar al home',
-      boton1: '',
-      boton2: ''
-    };
-    setTimeout(() => {
-      boxMsg.value = false;
-    }, 3000);
-    setTimeout(() => {
-      loading.value = false;
-    }, 3000);
-    setTimeout(() => {
+    formdata.append('nombreLlibret', nombreLlibret.value)
+    formdata.append('fecha', anyLlibret.value)
+    formdata.append('falla', store.state.falla.idFalla)
+    const handleError = () => {
+      boxMsg.value = true;
       card.value = {
         icono: llibretAdd,
-        titulo: 'Llibret actualitzat!!',
+        titulo: 'Oh oh, algo no ha ixit com esperava!',
         mensage: '',
-        type: 'success',
+        type: '',
         boton: 'Tornar al home',
         boton1: '',
         boton2: ''
       };
-    }, 4000);
-  };
-  //console.log(store.state.falla.idFalla)
-  store.dispatch('setLlibret',formdata).then((res) => {
-    if (!res.ok) {
-      handleError();
-    } else {
-      boxMsg.value = true;
-    }
-    store.dispatch('getUserData')
-  })
+      setTimeout(() => {
+        boxMsg.value = false;
+      }, 3000);
+      setTimeout(() => {
+        loading.value = false;
+      }, 3000);
+      setTimeout(() => {
+        card.value = {
+          icono: llibretAdd,
+          titulo: 'Llibret actualitzat!!',
+          mensage: '',
+          type: 'success',
+          boton: 'Tornar al home',
+          boton1: '',
+          boton2: ''
+        };
+      }, 4000);
+    };
+    //console.log(store.state.falla.idFalla)
+    store.dispatch('setLlibret',formdata).then((res) => {
+      if (!res.ok) {
+        handleError();
+      } else {
+        boxMsg.value = true;
+      }
+      store.dispatch('getUserData')
+    })
+  }
+
 
 }
 function goBack(){router.back()}

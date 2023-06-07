@@ -4,20 +4,20 @@
       <div v-for="(noticia, index) in sortedNoticias" :key="index" class="d-flex flex-column align-start justify-center p-4 mb-4 box-evento">
         <div class="d-flex justify-space-between align-center p-0 w-100">
           <p class="p-evento m-0" >Noticia</p>
-          <div class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
+          <div v-if="store.state.role==='ROLE_SUPER_ADMIN'" class="d-flex justify-space-around {{showActions[index] ? 'w-25': ''}}">
             <button v-if="showActions[index]" @click="toggleShowImg(index)" class="acciones-evento " href="#"><i class="mdi mdi-dots-vertical" ></i></button>
             <button v-if="!showActions[index]" @click="editNotice(noticia.idNoticia, noticia.contenido)" class="acciones-evento " href="#"><i class="mdi mdi-pencil-outline" ></i></button>
             <button v-if="!showActions[index]" @click="deleteComent(coment.idComentario)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
           </div>
         </div>
-        <div v-if="noticia.imagen" >
+        <div v-if="noticia.imagen" class="mt-4 noticia">
           <img class="w-100" :src="'http://localhost:8000/uploads/brochures/' + noticia.imagen" alt="imagen-comentario">
         </div>
-        <div class="info-evento d-flex flex-column p-0 mt-1">
+        <div class="info-evento d-flex flex-column p-0 mt-4">
           <p class="tituloS m-0">{{ noticia.titulo }}</p>
         </div>
-        <div class="info-evento d-flex flex-column p-0 mt-1">
-          <p class="textosReg m-0">{{ noticia.contenido }}</p>
+        <div class="info-evento d-flex flex-column p-0 mt-2">
+          <p class="textosReg color m-0">{{ noticia.contenido }}</p>
         </div>
         <div class="d-flex align-start mt-3 textosS">
           <p class="m-0">{{ formatDateFooter(noticia.fechaNoticia) }}</p>
@@ -33,7 +33,7 @@
 
 <script setup>
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
 
@@ -41,10 +41,11 @@ const router = useRouter()
 const store = useStore()
 let showActions = ref([])
 const noticias = computed(() => {
-  if (store.state.falla) {
-    showActions.value = Array(store.state.falla.noticias.length).fill(true);
+  if (store.state.noticias) {
+    console.log(store.state.noticias)
+    showActions.value = Array(store.state.noticias.length).fill(true);
 
-    return store.state.falla.noticias;
+    return store.state.noticias;
   } else {
     return [];
   }
@@ -82,6 +83,9 @@ const deleteNotice = (idComent)=>{
   })
 
 }
+onMounted(()=>{
+  store.dispatch('getNoticias')
+})
 </script>
 
 <style scoped>
@@ -98,12 +102,16 @@ const deleteNotice = (idComent)=>{
   cursor: pointer;
 }
 
-
+.noticia{
+  width:97%;
+}
 .acciones-evento{
 
   color: #909DAD;
 }
-
+.color{
+  color:#909DAD;
+}
 .p-evento {
   font-style: normal;
   font-weight: 500;

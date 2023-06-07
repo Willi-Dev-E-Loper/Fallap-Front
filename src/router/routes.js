@@ -1,4 +1,4 @@
-import  {WallNotice, Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
+import  {ShowEncuestas, WallNotice, Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
 
 export const routes=[
     { path: "/", redirect: "/login" },
@@ -107,6 +107,12 @@ export const routes=[
         path: "/wall-notice",
         name: "Muro noticias",
         component: WallNotice,
+        meta:{requiresAuth: true}
+    },
+    {
+        path: "/watch-survey",
+        name: "Muro encuestas",
+        component: ShowEncuestas,
         meta:{requiresAuth: true}
     },
 
