@@ -2,7 +2,7 @@
 
   <div v-if="falla!==null" class="container-fluid p-0  " :class="isWideScreen ? 'd-flex' : '' ">
     <nav-desktop v-if="isWideScreen"></nav-desktop>
-    <div class="pantalla m-0 w-100">
+    <div  class="pantalla m-0 w-100">
 
       <div class="caja">
         <div class="box">
@@ -22,7 +22,7 @@
               prepend-icon="mdi-account-circle-outline"
               color="grey"
           >
-            {{falla.falleros.length}} Fallers/es
+            {{falla.falleros ? falla.falleros.length : '0'}} Fallers/es
           </v-chip>
         </div>
         <div class="descripcion mt-4">
@@ -36,7 +36,7 @@
               label
           >
             <v-icon start icon="mdi mdi-crown"></v-icon>
-            {{falla.cargos[0]}}
+            {{falla.cargos ? falla.cargos[0] : 'Sense carreg'}}
           </v-chip>
           <v-chip
               class="mt-2"
@@ -44,7 +44,7 @@
               label
           >
             <v-icon start icon="mdi mdi-crown"></v-icon>
-            {{falla.cargos[1]}}
+            {{falla.cargos ? falla.cargos[1] : 'Sense carreg'}}
           </v-chip>
           <v-chip
               class="mt-2"
@@ -52,7 +52,7 @@
               label
           >
             <v-icon start icon="mdi mdi-shield"></v-icon>
-            {{falla.cargos[2]}}
+            {{falla.cargos ? falla.cargos[2] : 'Sense carreg'}}
           </v-chip>
         </div>
 
@@ -76,7 +76,7 @@
           <v-window v-model="tab">
             <v-window-item value="one" >
               <div class="actions d-flex flex-column">
-                <div v-if="falla.premios.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+                <div v-if="!falla.premios"  class="pb-10 pt-10 badway text-center d-flex flex-column">
                   <div v-html="badWay" ></div>
                   Encara no hi han premis que mostrar
                 </div>
@@ -100,7 +100,7 @@
 
             <v-window-item value="two">
               <div class="actions d-flex flex-column">
-                <div v-if="falla.llibrets.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+                <div v-if="!falla.llibrets"  class="pb-10 pt-10 badway text-center d-flex flex-column">
                   <div v-html="badWay"></div>
                   Encara no hi han llibrets que mostrar
                 </div>

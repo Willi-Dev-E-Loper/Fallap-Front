@@ -1,7 +1,7 @@
 <template>
   <v-container class="p-0">
     <div class="d-flex flex-column align-center mt-5">
-      <div v-if="sortedEncuestas.length === 0"  class="badway text-center d-flex flex-column">
+      <div v-if="!encuestas"  class="badway text-center d-flex flex-column">
         <div v-html="badWay"></div>
         Encara no hi han enquestes que mostrar
       </div>
@@ -72,7 +72,10 @@ let showActions = ref([])
 let loading = ref(false)
 const encuestas = computed(() => {
   if (store.state.falla) {
-    showActions.value = Array(store.state.falla.encuestas.length).fill(true);
+    if(store.state.falla.encuestas){
+
+      showActions.value = Array(store.state.falla.encuestas.length).fill(true);
+    }
 
     return store.state.falla.encuestas;
   } else {
@@ -81,11 +84,14 @@ const encuestas = computed(() => {
 });
 let showLoader = ref(encuestas.value.map(() => false));
 const sortedEncuestas = computed(() => {
-  return encuestas.value.slice().sort((a, b) => {
-    const dateA = parseFechaComentario(a.fechaCreacion);
-    const dateB = parseFechaComentario(b.fechaCreacion);
-    return dateB - dateA;
-  });
+  if(encuestas.value){
+    return encuestas.value.slice().sort((a, b) => {
+      const dateA = parseFechaComentario(a.fechaCreacion);
+      const dateB = parseFechaComentario(b.fechaCreacion);
+      return dateB - dateA;
+    });
+  }
+
 });
 const reactEncuesta= (index, respuestas)=> {
   showLoader.value[index] = true;
@@ -102,29 +108,7 @@ const reactEncuesta= (index, respuestas)=> {
   })
 
 }
-function contarRepeticiones(array) {
-  const conteo = {};
-  const total = array.length;
 
-  for (let i = 0; i < total; i++) {
-    const elemento = array[i];
-    if (conteo[elemento]) {
-      conteo[elemento] += 1;
-    } else {
-      conteo[elemento] = 1;
-    }
-  }
-
-  const porcentajes = {};
-
-  for (const elemento in conteo) {
-    const cantidad = conteo[elemento];
-    const porcentaje = Math.round((cantidad / total) * 100);
-    porcentajes[elemento] = `${porcentaje}%`;
-  }
-
-  return porcentajes;
-}
 const editEncuesta = (index, coment,opciones,fecha) => {
   const opcionesParametro = opciones.join(",");
 

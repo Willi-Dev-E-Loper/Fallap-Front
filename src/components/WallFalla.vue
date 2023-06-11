@@ -4,8 +4,7 @@
     <div class="panel-super-admin d-flex row">
 
       <div v-if="!isWideScreen" class="logo-falla p-0 mb-3">
-        <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="logo falla" class="logo">
-      </div>
+        <img :src="falla.logo ? 'http://localhost:8000/uploads/brochures/' + falla.logo : 'http://localhost:8000/uploads/brochures/perfil-base.jpg'" alt="" class="logo">      </div>
 
       <p class="p-0 m-0">Falla</p>
       <h1 class="p-0 m-0 falla">{{ falla.nombre }}</h1>
@@ -92,6 +91,7 @@ onUnmounted(() => {
 }
 .logo-falla img{
   width: 100px;
+  border-radius: 50%;
 }
 .titulo{
 

@@ -1,7 +1,7 @@
 <template>
 <v-container class="p-0">
   <div class="d-flex flex-column align-center mt-5">
-    <div v-if="sortedEventos.length === 0"  class="pb-10 pt-10 badway text-center d-flex flex-column">
+    <div v-if="!eventos"  class="pb-10 pt-10 badway text-center d-flex flex-column">
       <div v-html="badWay"></div>
       Encara no hi han events que mostrar
     </div>
@@ -76,18 +76,23 @@ let showLoader = ref([])
 let loading = ref(false)
 const eventos = computed(() => {
   if (store.state.falla) {
-    showActions.value = Array(store.state.falla.eventos.length).fill(true);
+    if(store.state.falla.eventos){
+      showActions.value = Array(store.state.falla.eventos.length).fill(true);
+    }
     return store.state.falla.eventos;
   } else {
     return [];
   }
 });
 const sortedEventos = computed(() => {
-  return eventos.value.slice().sort((a, b) => {
-    const dateA = parseFechaComentario(a.fechaCreacion);
-    const dateB = parseFechaComentario(b.fechaCreacion);
-    return dateB - dateA;
-  });
+  if(eventos.value){
+    return eventos.value.slice().sort((a, b) => {
+      const dateA = parseFechaComentario(a.fechaCreacion);
+      const dateB = parseFechaComentario(b.fechaCreacion);
+      return dateB - dateA;
+    });
+  }
+
 });
 const editEvent = (index, titulo,contenido,pago,tienePago, fecha) => {
 
