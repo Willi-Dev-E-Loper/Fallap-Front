@@ -14,8 +14,8 @@
             <button v-if="!showActions[index]" @click="deleteComent(coment.idComentario)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
           </div>
         </div>
-        <div v-if="coment.imagen" class="mt-2">
-          <img :src="'http://localhost:8000/uploads/brochures/' + coment.imagen" alt="imagen-comentario">
+        <div v-if="coment.imagen" class="mt-2 w-100">
+          <img class="" :src="'http://localhost:8000/uploads/brochures/' + coment.imagen" alt="imagen-comentario">
         </div>
         <div class="info-evento d-flex flex-column p-0 mt-4">
           <p class="textosReg m-0">{{ coment.contenido }}</p>
@@ -29,10 +29,11 @@
 </template>
 <script setup>
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
 import {badWay} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const router = useRouter()
 const store = useStore()
@@ -59,7 +60,6 @@ const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };
 const editComent = (index, coment) => {
-  console.log(coment)
   router.push({ name: 'Nuevo comentario',
     params: { contenido:coment,
               idFalla: store.state.falla.idFalla,
@@ -76,6 +76,18 @@ const deleteComent = (idComent)=>{
   })
 
 }
+const isWideScreen = ref(window.innerWidth >= 768);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -89,9 +101,11 @@ const deleteComent = (idComent)=>{
   background: #FFFFFF;
   border: 1px solid #EBEEF2;
   border-radius: 8px;
-  cursor: pointer;
-}
 
+}
+img{
+  width:99%;
+}
 .badway{
   font-weight: 500;
   font-size: 18px;

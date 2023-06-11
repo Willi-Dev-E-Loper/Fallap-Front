@@ -12,20 +12,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import {routes} from './router/routes.js'
 import {store} from "@/store";
 import jwtDecode from "jwt-decode";
-import {
-    AddComent, AddEncuesta,
-    AddEvent,
-    AddFalla, AddLlibrets, AddNotice,
-    AddUser,
-    AdminActions,
-    AdminManage, Crear,
-    Falla,
-    Login,
-    PremiosManage,
-    SuperAdminActions,
-    UsersFromCSV, WallFalla
-} from "@/router/components";
-
 
 
 let theme='light';
@@ -79,31 +65,35 @@ const router= createRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-    console.log(store.state.falla)
     if (to.meta.requiresAuth) {
         const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-        const isTokenExpired = checkTokenExpiration(token);
-        const jwt = jwtDecode(token).roles[0]
 
-        if (token && !isTokenExpired) {
+        if (token) {
+            const isTokenExpired = checkTokenExpiration(token);
 
-            if(to.path==='/sa-actions' && jwt !== 'ROLE_SUPER_ADMIN' ){
-                console.log(jwt)
-                next('/');//PONER PAGINA ACCES DENIED
+            if (!isTokenExpired) {
+                const jwt = jwtDecode(token).roles[0];
+
+                if (to.path === '/sa-actions' && jwt !== 'ROLE_SUPER_ADMIN') {
+                    next('/access-denied'); // PONER PAGINA ACCESS DENIED
+                }
+                if ((to.path === '/sa-actions' || to.path === '/a-actions') && jwt === 'ROLE_USER') {
+                    next('/access-denied'); // PONER PAGINA ACCESS DENIED
+                }
+                next(); // Permitir el acceso a la ruta original
+            } else {
+                next('/access-denied');
+                //toast.show('error', 'Invalid token', 'El token de acceso no existe o ha expirado', 3);
             }
-            if((to.path==='/sa-actions' || to.path==='/a-actions') && jwt === 'ROLE_USER' ){
-                console.log(jwt)
-                next('/');//PONER PAGINA ACCESS DENIED
-            }
-            next();
         } else {
-            next('/');
+            next('/access-denied');
             //toast.show('error', 'Invalid token', 'El token de acceso no existe o ha expirado', 3);
         }
     } else {
         next();
     }
 });
+
 const savedState = sessionStorage.getItem('myAppStore');
 if (savedState) {
     store.replaceState(JSON.parse(savedState));

@@ -39,10 +39,13 @@ let theme= ['red', 'indigo', 'orange', 'primary', 'secondary', 'success', 'info'
 
 <style scoped>
 .a{
-  background-image: url("./playground_assets/Desktop - 6.jpg");
+  background-image: url("./playground_assets/img_1.png");
   background-size: cover;
+  background-attachment: fixed; /* Agregamos esta línea */
+
 }
-@media (min-width: 768px) {
+
+@media (min-width: 933px) {
   .b{
     margin: 0 258px 0 258px;
   }

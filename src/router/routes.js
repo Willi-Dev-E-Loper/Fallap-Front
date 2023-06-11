@@ -1,4 +1,4 @@
-import  {ShowEncuestas, WallNotice, Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
+import  {AccesDenied ,ShowEncuestas, WallNotice, Login, WallFalla, AddNotice, AddUser, AddLlibrets, AddComent, SuperAdminActions, UsersFromCSV, AdminManage, PremiosManage, AddFalla, Crear, Falla, AdminActions, AddEvent, AddEncuesta } from './components.js'
 
 export const routes=[
     { path: "/", redirect: "/login" },
@@ -9,13 +9,15 @@ export const routes=[
 
     },
     {
+        path: "/access-denied",
+        name: "Accés denegat",
+        component: AccesDenied
+    },
+    {
         path: "/falla",
         name: "Home",
         component: Falla,
         meta:{requiresAuth: true}
-
-
-
     },
     {
         path: "/sa-actions",

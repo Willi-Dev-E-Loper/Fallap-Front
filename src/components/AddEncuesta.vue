@@ -1,105 +1,110 @@
 <template>
-  <div class="container-flex p-0">
-    <button class="logo-back ml-6 mt-10" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
+  <div class="container-flex p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-10" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-16' : '' ">
 
 
-      <div class="titulo p-0">
-        <h1>{{params.idEncuesta ? 'Editar enquesta' :'Crear enquesta'}}</h1>
-      </div>
-      <v-form   @submit.prevent="addEncuesta" ref="form" class="p-0">
-        <v-text-field
-            v-model="pregunta"
-            class="mt-1 col-sm-12 p-0 custom-input"
-            label="Pregunta"
-            :rules="[v => !!v || 'La pregunta no pot estar vuida']"
-            density="comfortable"
-            variant="outlined"
-            color="var(--dl-color-miostodos-moradoprincipal)"
-
-        ></v-text-field>
-        <v-text-field
-            v-model="respuesta"
-            class="mt-1 col-sm-12 p-0 custom-input "
-            density="comfortable"
-            :rules="[v => !!v || 'Fan falta al menys dos respostes']"
-            label="Contestaciò"
-            prepend-inner-icon="mdi mdi-circle-small"
-            placeholder="Si"
-            variant="outlined"
-            color="var(--dl-color-miostodos-moradoprincipal)"
-        ></v-text-field>
-        <div v-for="(field, index) in fields" :key="index" class="p-0">
-
+        <div class="titulo p-0">
+          <h1>{{params.idEncuesta ? 'Editar enquesta' :'Crear enquesta'}}</h1>
+        </div>
+        <v-form   @submit.prevent="addEncuesta" ref="form" class="p-0" :class="isWideScreen ? 'mt-11' : '' ">
           <v-text-field
-              class="mt-1 col-sm-12 p-0 custom-input "
+              v-model="pregunta"
+              class="mt-1 col-sm-12 p-0 custom-input"
+              label="Pregunta"
+              :rules="[v => !!v || 'La pregunta no pot estar vuida']"
               density="comfortable"
-              label="Contestaciò"
-              prepend-inner-icon="mdi mdi-circle-small"
-              :rules="[v => !!v || '']"
-              placeholder="No"
               variant="outlined"
               color="var(--dl-color-miostodos-moradoprincipal)"
-              v-model="field.value"
-              clearable
-              @click:clear="removeField(index)"
-              persistent-clear
+
           ></v-text-field>
+          <v-text-field
+              v-model="respuesta"
+              class="mt-1 col-sm-12 p-0 custom-input "
+              density="comfortable"
+              :rules="[v => !!v || 'Fan falta al menys dos respostes']"
+              label="Contestaciò"
+              prepend-inner-icon="mdi mdi-circle-small"
+              placeholder="Si"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+          ></v-text-field>
+          <div v-for="(field, index) in fields" :key="index" class="p-0">
 
-        </div>
-        <div class="btn d-flex  boton-1" @click="addField">
-          Afegir contestaciò
-        </div>
+            <v-text-field
+                class="mt-1 col-sm-12 p-0 custom-input "
+                density="comfortable"
+                label="Contestaciò"
+                prepend-inner-icon="mdi mdi-circle-small"
+                :rules="[v => !!v || '']"
+                placeholder="No"
+                variant="outlined"
+                color="var(--dl-color-miostodos-moradoprincipal)"
+                v-model="field.value"
+                clearable
+                @click:clear="removeField(index)"
+                persistent-clear
+            ></v-text-field>
+
+          </div>
+          <div class="btn d-flex  boton-1" @click="addField">
+            Afegir contestaciò
+          </div>
 
 
 
-        <v-text-field
-            v-model="fechaCaducidad"
-            type="date"
-            class="mt-6 col-sm-12 p-0 custom-input "
-            density="comfortable"
-            label="Data de finalització"
-            :rules="[v => !!v || 'El camp data no pot estar buit']"
+          <v-text-field
+              v-model="fechaCaducidad"
+              type="date"
+              class="mt-6 col-sm-12 p-0 custom-input "
+              density="comfortable"
+              label="Data de finalització"
+              :rules="[v => !!v || 'El camp data no pot estar buit']"
 
-            placeholder="--/--/--"
-            prepend-inner-icon="mdi mdi-calendar-range"
-            variant="outlined"
-            color="var(--dl-color-miostodos-moradoprincipal)"
-        ></v-text-field>
-        <v-progress-linear
-            v-if="loading"
-            indeterminate
-            rounded
-            color="var(--dl-color-miostodos-moradoprincipal)"
-            class="mb-2"
-        ></v-progress-linear>
-        <button type="submit" class="btn d-flex col-sm-12 w-100 boton" >
-          {{params.contenido ? 'Editar enquesta' : 'Crear enquesta'}}
-        </button>
+              placeholder="--/--/--"
+              prepend-inner-icon="mdi mdi-calendar-range"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+          ></v-text-field>
+          <v-progress-linear
+              v-if="loading"
+              indeterminate
+              rounded
+              color="var(--dl-color-miostodos-moradoprincipal)"
+              class="mb-2"
+          ></v-progress-linear>
+          <button type="submit" class="btn d-flex col-sm-12 w-100 boton" >
+            {{params.contenido ? 'Editar enquesta' : 'Crear enquesta'}}
+          </button>
 
-      </v-form>
+        </v-form>
 
+      </div>
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <div v-if="boxMsg" class="box-message-wrapper">
     <box-message :card="card"></box-message>
   </div>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {dateNow} from "@/utils/date";
 import {useStore} from "vuex";
 import {encuestaAdd, userAdd} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const router = useRouter()
 const store = useStore()
@@ -122,9 +127,7 @@ let card=ref({
 let idEncuesta = ref(params.idEncuesta);
 let options=[]
 if(params.opciones){
-  console.log(params.opciones)
   params.opciones.split(',')
-  console.log(params.opciones)
   const a = params.opciones.split(',')
   respuesta.value = a[0]
   a.shift()
@@ -160,7 +163,6 @@ const addEncuesta= ()=>{
     fechaCreacion: dateNow(),
     fechaCaducidad: fechaCaducidad.value,
   }
-  console.log(respuestas.length)
   if(pregunta.value && respuestas.length >= 2 && fechaCaducidad.value){
     loading.value = true
     if(idEncuesta.value){
@@ -235,6 +237,18 @@ const addEncuesta= ()=>{
     }
 
 }}
+const isWideScreen = ref(window.innerWidth >= 1300);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){router.back()}
 
 </script>

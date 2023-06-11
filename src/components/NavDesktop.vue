@@ -1,13 +1,13 @@
-<template>
-  <div class="container-flex p-0 w-25">
-    <div class="panel-super-admin  row">
-      <div class="logo-falla p-0 mb-3">
-        <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="" class="logo">
+<template class="color">
+  <div class="container-flex p-0 w-25 color">
+    <div class="panel-super-admin  row ">
+      <div class="logo-falla p-0 mb-3 ">
+        <img :src="falla.logo ? 'http://localhost:8000/uploads/brochures/' + falla.logo : 'http://localhost:8000/uploads/brochures/perfil-base.jpg'" alt="logo-falla" class="logo">
       </div>
 
 
 
-      <div class="d-flex flex-column mt-10 p-0">
+      <div class="d-flex flex-column mt-14 p-0 ">
         <button
             v-for="(boton,index) in botones"
             :key="index"
@@ -23,8 +23,16 @@
 
         </button>
       </div>
-
-
+      <div class="nav-foot p-0">
+        <div v-html="logoFallapNav"></div>
+        <div class=" mt-6">
+          <p class="m-0 foot">Bugs</p>
+          <p class="m-0 mt-2 foot">Contacte</p>
+        </div>
+        <button class="btn d-flex mt-6 btn-logout" @click="logOut">
+          Tacar sessió
+        </button>
+      </div>
     </div>
 
 
@@ -36,7 +44,7 @@ import {computed, onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {
-  create,
+  create, logoFallapNav,
   noticeNav, peinetaNav, wallNav
 } from "@/utils/icons";
 
@@ -75,7 +83,7 @@ const botones= ref([
 function handleClick(accion) {
   switch (accion) {
     case 1:
-      goCreate();
+      panelActions();
       break;
     case 2:
       goWallNotice();
@@ -103,12 +111,10 @@ const panelActions= ()=>{
   }
 }
 const goFalla= ()=>{
-  console.log(role.value)
 
   router.push({ path: '/falla' })
 }
 const goWallFalla= ()=>{
-  console.log(role.value)
 
   router.push({ path: '/wall-falla' })
 }
@@ -152,9 +158,24 @@ onMounted(()=>{
 
 <style scoped>
 .container-flex{
+  position:sticky;
+  top:0;
   font-family:'Inter', sans-serif;
   padding: 10px;
   min-width:334px;
+  height:100vh;
+}
+.foot{
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  /* identical to box height, or 18px */
+
+
+  /* Mios todos/Gris General */
+
+  color: #3D4C5E;
+
 }
 .panel-super-admin{
   margin: 48px 64px 127px 64px;
@@ -162,6 +183,13 @@ onMounted(()=>{
 }
 .logo-falla img{
   width: 100px;
+  border-radius:50%;
+}
+.color{
+  border:1px solid #EBEEF2;
+}
+.nav-foot{
+  margin-top: 235px;
 }
 .titulo{
 
@@ -196,6 +224,34 @@ path {
   padding: 10px 16px;
   box-shadow: 0 4px 6px -2px rgba(216, 226, 248, 0.3);
   border-radius: 8px;
+
+}
+.btn-logout{
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 10px;
+
+  width: 196px;
+  height: 44px;
+  background: #FFFFFF;
+  border: 1px solid #847AF4;
+  box-shadow: 0 4px 6px -2px rgba(216, 226, 248, 0.3);
+  border-radius: 8px;
+
+  flex: none;
+  order: 2;
+  align-self: stretch;
+  flex-grow: 0;
+
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #847AF4;
 
 }
 .boton:hover{

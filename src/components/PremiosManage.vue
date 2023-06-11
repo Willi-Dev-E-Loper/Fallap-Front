@@ -1,118 +1,123 @@
 <template>
-  <div class="container-fluid">
-    <button class="logo-back ml-6 mt-7" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
-
-      <div class="titulo p-0">
-        <h1>Actualitzar premis</h1>
-      </div>
-      <div class="d-flex flex-column align-start p-0 mt-4">
-        <p class="titulo2">Premis actuals</p>
-        <v-chip
-            v-for="(premi, index) in premios"
-            class="mb-2 mt-1 pil"
-
-            border="none"
-            append-icon="mdi mdi-close-circle"
-            @click="deletePremio(index)"
-
-            variant="text">
-
-          {{ premi[3] }} {{premi[0]}} {{premi[2]}} - {{ premi[1]}}
-        </v-chip>
-      </div>
-
-      <v-select
-          class="mt-4  p-0 custom-select"
-          v-model="fallaSeleccionada"
-          :items="fallas"
-          item-value="idFalla"
-          item-title="nombre"
-          label="Tria una falla"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-      <v-select
-          class="mt-2  p-0 custom-select"
-          v-model="premioSeleccionado"
-          :items="premis"
-          density="comfortable"
-          item-title="premio"
-          label="Tipus de premi"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-      <v-select
-          v-if="premioSeleccionado==='Millor Falla'"
-          class="mt-2  p-0 custom-select"
-          v-model="seccionSeleccionado"
-          :items="secciones"
-          density="comfortable"
-          item-title="seccion"
-          label="Secció"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-      <v-select
-          v-if="premioSeleccionado==='Millor Falla'"
-          class="mt-2  p-0 custom-select"
-          v-model="monumentoSeleccionado"
-          :items="monuments"
-          density="comfortable"
-          item-title="monument"
-          label="Monument"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-      <v-select
-          class="mt-2  p-0 custom-select"
-          v-model="posicionSeleccionado"
-          :items="posiciones"
-          density="comfortable"
-          item-title="posicion"
-          label="Tria una posiciò"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          class="mb-2"
-      ></v-progress-linear>
-      <button class="btn d-flex col-sm-12 boton" @click="setPremio" >
-        Afegir premi
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-7" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
       </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-6' : '' ">
 
+        <div class="titulo p-0">
+          <h1>Actualitzar premis</h1>
+        </div>
+        <div class="d-flex flex-column align-start p-0 mt-4">
+          <p class="titulo2">Premis actuals</p>
+          <v-chip
+              v-for="(premi, index) in premios"
+              class="mb-2 mt-1 pil"
+
+              border="none"
+              append-icon="mdi mdi-close-circle"
+              @click="deletePremio(index)"
+
+              variant="text">
+
+            {{ premi[3] }} {{premi[0]}} {{premi[2]}} - {{ premi[1]}}
+          </v-chip>
+        </div>
+
+        <v-select
+            class="mt-4  p-0 custom-select"
+            v-model="fallaSeleccionada"
+            :items="fallas"
+            item-value="idFalla"
+            item-title="nombre"
+            label="Tria una falla"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+        <v-select
+            class="mt-2  p-0 custom-select"
+            v-model="premioSeleccionado"
+            :items="premis"
+            density="comfortable"
+            item-title="premio"
+            label="Tipus de premi"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+        <v-select
+            v-if="premioSeleccionado==='Millor Falla'"
+            class="mt-2  p-0 custom-select"
+            v-model="seccionSeleccionado"
+            :items="secciones"
+            density="comfortable"
+            item-title="seccion"
+            label="Secció"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+        <v-select
+            v-if="premioSeleccionado==='Millor Falla'"
+            class="mt-2  p-0 custom-select"
+            v-model="monumentoSeleccionado"
+            :items="monuments"
+            density="comfortable"
+            item-title="monument"
+            label="Monument"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+        <v-select
+            class="mt-2  p-0 custom-select"
+            v-model="posicionSeleccionado"
+            :items="posiciones"
+            density="comfortable"
+            item-title="posicion"
+            label="Tria una posiciò"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            class="mb-2"
+        ></v-progress-linear>
+        <button class="btn d-flex col-sm-12 boton" @click="setPremio" >
+          Afegir premi
+        </button>
+
+      </div>
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <div v-if="boxMsg" class="box-message-wrapper">
     <box-message :card="card"  @avanzar="realizarAccionAvanzar(index)" @cancelar="realizarAccionCancelar"></box-message>
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {premioAdd} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 const router = useRouter()
 
 let premis= ref([{premio:'Millor Falla', id: 1},{premio:'Millor Ninot', id:2},{premio:'Millor Curtmetratge', id:3},{premio:'Millor Festival musical infantil', id:4},{premio:'Millor Engalanament de carrers', id:5},{premio:'Millor Cavalcada', id:6},{premio:'Millor Llibret', id:7},{premio:'Millor Crítica', id:8}])
@@ -123,7 +128,6 @@ let idx = ref()
 const store = useStore()
 const premios = computed(() => {
   if (store.state.falla) {
-    console.log(store.state.falla.premios)
     return store.state.falla.premios;
   } else {
     return [];
@@ -150,7 +154,6 @@ let card=ref({
 })
 const deletePremio = (index) => {
   idx.value = index
-  console.log(idx.value)
   card.value={
     icono: premioAdd,
     titulo:'Estas segur de que vols borrar el premi?',
@@ -196,8 +199,19 @@ function setPremio(){
     loading.value = false
     boxMsg.value = true
   })
-  console.log(premi);
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -211,7 +225,6 @@ function setPremio(){
 }
 .container-fluid {
   font-family: 'Inter', sans-serif;
-  border: 1px solid blue;
   height: 100vh;
 }
 

@@ -1,80 +1,88 @@
 <template>
-  <div class="container-fluid">
-    <button class="logo-back ml-6 mt-7 " @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
-
-      <div class="titulo p-0">
-        <h1>Gestiò administradors</h1>
-      </div>
-
-
-      <v-select
-          class="mt-4  p-0 custom-select"
-          v-model="fallaSeleccionada"
-          :items="fallas"
-          v-on:update:modelValue="getUsers"
-          item-value="idFalla"
-          item-title="nombre"
-          label="Tria una falla"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          clearable
-      ></v-select>
-      <v-select
-          v-if="usuarios.length>0"
-          density="comfortable"
-          class="mt-4  p-0 custom-select"
-          v-model="usuarioSeleccionado"
-          :items="usuarios"
-          item-value="idFallero"
-          item-title="nombre"
-          label="Tria un faller"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-          v-on:update:modelValue="checkAdmin"
-          variant="outlined"
-          clearable
-          return-object
-      ></v-select>
-
-      <div class="form-check">
-        <input class="form-check-input custom-checkbox" type="checkbox" :checked="isAdmin" @change="toggleCheckbox">
-        <label class="form-check-label" for="myCheckbox">
-          Es administrador?
-        </label>
-      </div>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          class="mb-2"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
-      <button class="btn d-flex col-sm-12 boton" @click="submitAdmin">
-        Actualitzar
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-7 " @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-12' : '' ">
+
+        <div class="titulo p-0">
+          <h1>Gestiò administradors</h1>
+        </div>
+
+        <v-form   @submit.prevent="submitAdmin" ref="form" class=" p-0"  :class="isWideScreen ? 'mt-8' : '' ">
+        <v-select
+            class="mt-4  p-0 custom-select"
+            v-model="fallaSeleccionada"
+            :items="fallas"
+            v-on:update:modelValue="getUsers"
+            :rules="[v => !!v || 'El titol no pot estar buit']"
+            item-value="idFalla"
+            item-title="nombre"
+            label="Tria una falla"
+            density="comfortable"
+            variant="outlined"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            clearable
+        ></v-select>
+        <v-select
+            v-if="usuarios.length>0"
+            density="comfortable"
+            class="mt-4  p-0 custom-select"
+            v-model="usuarioSeleccionado"
+            :items="usuarios"
+            item-value="idFallero"
+            :rules="[v => !!v || 'El titol no pot estar buit']"
+            item-title="nombre"
+            label="Tria un faller"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+            v-on:update:modelValue="checkAdmin"
+            variant="outlined"
+            clearable
+            return-object
+        ></v-select>
+
+        <div class="form-check">
+          <input class="form-check-input custom-checkbox" type="checkbox" :checked="isAdmin" @change="toggleCheckbox">
+          <label class="form-check-label" for="myCheckbox">
+            Es administrador?
+          </label>
+        </div>
+        <v-progress-linear
+            v-if="loading"
+            indeterminate
+            rounded
+            class="mb-2"
+            color="var(--dl-color-miostodos-moradoprincipal)"
+        ></v-progress-linear>
+        <button class="btn d-flex col-sm-12 boton" >
+          Actualitzar
+        </button>
+        </v-form>
+      </div>
 
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <div v-if="boxMsg" class="box-message-wrapper">
     <box-message :card="card"></box-message>
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref} from "vue";
+import {computed, onMounted, onUnmounted, onUpdated, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import axios from "axios";
 import {userAdd} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const store = useStore()
 const fallas= computed(() => {
@@ -107,26 +115,43 @@ function checkAdmin(){
 }
 async function getUsers(){
   if (fallaSeleccionada.value!==null){
-    console.log(fallaSeleccionada.value)
-    let response = await axios.get('http://localhost:8000/api/falla/falleros/' + fallaSeleccionada.value)
-    console.log(response.data)
+    let response = await axios.get('http://localhost:8000/api/falla/falleros/' + fallaSeleccionada.value,
+        {
+          headers: {
+            Authorization: `Bearer ${store.state.token  || sessionStorage.getItem('token')}`,
+          },
+        })
     usuarios.value = response.data
   }
 
 }
 function submitAdmin(){
-  loading.value=true
-  console.log(isAdmin.value + ' ' + usuarioSeleccionado.value.idFallero)
-  let roles = {
-    idFallero: usuarioSeleccionado.value.idFallero,
-    status: isAdmin.value
+  if(fallaSeleccionada.value && usuarioSeleccionado.value){
+    loading.value=true
+    let roles = {
+      idFallero: usuarioSeleccionado.value.idFallero,
+      status: isAdmin.value
+    }
+    store.dispatch('postRole', roles).then(()=>{
+      store.dispatch('getUserData')
+      loading.value = false
+      boxMsg.value= true
+    })
   }
-  store.dispatch('postRole', roles).then(()=>{
-    store.dispatch('getUserData')
-    loading.value = false
-    boxMsg.value= true
-  })
+
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){router.back()}
 
 </script>
@@ -134,7 +159,6 @@ function goBack(){router.back()}
 <style scoped>
 .container-fluid{
   font-family:'Inter', sans-serif;
-  border: 1px solid blue;
   height: 100vh;
 }
 .panel-super-admin{

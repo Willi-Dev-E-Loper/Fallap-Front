@@ -52,12 +52,10 @@ const panelActions= ()=>{
   }
 }
 const goFalla= ()=>{
-  console.log(role.value)
 
   router.push({ path: '/falla' })
 }
 const goWallFalla= ()=>{
-  console.log(role.value)
 
   router.push({ path: '/wall-falla' })
 }

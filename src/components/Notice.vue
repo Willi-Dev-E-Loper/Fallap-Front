@@ -10,8 +10,8 @@
             <button v-if="!showActions[index]" @click="deleteComent(coment.idComentario)" class="acciones-evento  ml-3" href="#"><i class="mdi mdi-trash-can-outline" ></i></button>
           </div>
         </div>
-        <div v-if="noticia.imagen" class="mt-4 noticia">
-          <img class="w-100" :src="'http://localhost:8000/uploads/brochures/' + noticia.imagen" alt="imagen-comentario">
+        <div v-if="noticia.imagen" class="mt-4 w-100 noticia">
+          <img class="" :src="'http://localhost:8000/uploads/brochures/' + noticia.imagen" alt="imagen-comentario">
         </div>
         <div class="info-evento d-flex flex-column p-0 mt-4">
           <p class="tituloS m-0">{{ noticia.titulo }}</p>
@@ -33,16 +33,16 @@
 
 <script setup>
 import {useStore} from "vuex";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const router = useRouter()
 const store = useStore()
 let showActions = ref([])
 const noticias = computed(() => {
   if (store.state.noticias) {
-    console.log(store.state.noticias)
     showActions.value = Array(store.state.noticias.length).fill(true);
 
     return store.state.noticias;
@@ -66,7 +66,6 @@ const toggleShowImg = (index) => {
 
 
 const editNotice = (index, coment) => {
-  console.log(coment)
   router.push({ name: 'Nuevo comentario',
         params: { contenido:coment,
                 idFalla: store.state.falla.idFalla,
@@ -83,7 +82,18 @@ const deleteNotice = (idComent)=>{
   })
 
 }
+const isWideScreen = ref(window.innerWidth >= 768);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+
+onUnmounted(() => {
+
+  window.removeEventListener('resize', handleResize);
+});
 onMounted(()=>{
+  window.addEventListener('resize', handleResize);
   store.dispatch('getNoticias')
 })
 </script>
@@ -99,7 +109,7 @@ onMounted(()=>{
   background: #FFFFFF;
   border: 1px solid #EBEEF2;
   border-radius: 8px;
-  cursor: pointer;
+
 }
 
 .noticia{
@@ -128,7 +138,9 @@ onMounted(()=>{
   color: #3D4C5E;
 
 }
-
+img{
+  width:99%;
+}
 .info-evento {
   padding: 5px;
   width:90%;

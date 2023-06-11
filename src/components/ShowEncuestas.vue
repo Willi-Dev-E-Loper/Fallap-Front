@@ -1,32 +1,37 @@
 <template>
-  <div class="container-fluid">
-    <button class="logo-back ml-6 mt-7" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div>
+      <button class="logo-back ml-6 mt-7" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-12' : '' ">
 
-      <div class="titulo p-0">
-        <h1>Veure enquestes</h1>
+        <div class="titulo p-0">
+          <h1>Veure enquestes</h1>
+        </div>
+
+        <encuesta-results :class="isWideScreen ? 'mt-6' : '' "></encuesta-results>
+
       </div>
-
-        <encuesta-results></encuesta-results>
-
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
 </template>
 
 <script setup>
-import {onBeforeMount, ref, computed} from "vue";
+import {onBeforeMount, ref, computed, onMounted, onUnmounted} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import EncuestaResults from "@/components/EncuestaResults.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {userAdd} from "@/utils/icons";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const store = useStore()
 const router = useRouter()
@@ -65,7 +70,18 @@ function submitUser(){
     boxMsg.value= true
   })
 }
+const isWideScreen = ref(window.innerWidth >= 1396);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1396;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){router.back()}
 </script>
 

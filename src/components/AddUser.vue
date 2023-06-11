@@ -1,96 +1,101 @@
 <template>
-  <div class="container-fluid">
-    <button class="logo-back ml-6 mt-7" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
-
-      <div class="titulo p-0 mb-4">
-        <h1>Afegir usuari</h1>
-      </div>
-
-      <v-form   @submit.prevent="submitUser" ref="form" class="p-0">
-      <v-select
-          v-if="store.state.role==='ROLE_SUPER_ADMIN'"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          v-model="fallaSeleccionada"
-          :items="fallas"
-          item-value="idFalla"
-          item-title="nombre"
-          label="Tria una falla"
-          variant="outlined"
-          density="comfortable"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-          return-object
-          clearable
-      ></v-select>
-      <v-text-field
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Nom de l'usuari/a"
-          v-model="nombre"
-          :rules="[v => !!v || 'El camp nom no pot estar buit']"
-          prepend-inner-icon="mdi mdi-account-outline"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-      ></v-text-field>
-      <v-text-field
-          class="mt-1 col-sm-12 p-0 custom-input "
-          density="comfortable"
-          label="Any de naixement"
-          v-model="fechaNacimiento"
-          type="date"
-          :rules="[v => !!v || 'El camp data no pot estar buit']"
-          placeholder="--/--/--"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-      ></v-text-field>
-      <v-text-field
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="E-mail de l'usuari/a"
-          prepend-inner-icon="mdi mdi-email-outline"
-          density="comfortable"
-          :rules="[v => !!v || 'El e-mail data no pot estar buit']"
-
-          v-model="email"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-
-      ></v-text-field>
-
-        <v-progress-linear
-            v-if="loading"
-            indeterminate
-            rounded
-            color="var(--dl-color-miostodos-moradoprincipal)"
-            class="mb-2"
-        ></v-progress-linear>
-      <button class="btn d-flex col-sm-12 boton w-100" >
-        Crear l'usuari
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-7" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-8' : '' ">
 
-      </v-form>
+        <div class="titulo p-0 mb-4">
+          <h1>Afegir usuari</h1>
+        </div>
+
+        <v-form   @submit.prevent="submitUser" ref="form" class="p-0" :class="isWideScreen ? 'mt-10' : '' ">
+          <v-select
+              v-if="store.state.role==='ROLE_SUPER_ADMIN'"
+              class="mt-1 col-sm-12 p-0 custom-input"
+              v-model="fallaSeleccionada"
+              :items="fallas"
+              item-value="idFalla"
+              item-title="nombre"
+              label="Tria una falla"
+              variant="outlined"
+              density="comfortable"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+
+              return-object
+              clearable
+          ></v-select>
+          <v-text-field
+              class="mt-1 col-sm-12 p-0 custom-input"
+              label="Nom de l'usuari/a"
+              v-model="nombre"
+              :rules="[v => !!v || 'El camp nom no pot estar buit']"
+              prepend-inner-icon="mdi mdi-account-outline"
+              density="comfortable"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+
+          ></v-text-field>
+          <v-text-field
+              class="mt-1 col-sm-12 p-0 custom-input "
+              density="comfortable"
+              label="Any de naixement"
+              v-model="fechaNacimiento"
+              type="date"
+              :rules="[v => !!v || 'El camp data no pot estar buit']"
+              placeholder="--/--/--"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+
+          ></v-text-field>
+          <v-text-field
+              class="mt-1 col-sm-12 p-0 custom-input"
+              label="E-mail de l'usuari/a"
+              prepend-inner-icon="mdi mdi-email-outline"
+              density="comfortable"
+              :rules="[v => !!v || 'El e-mail data no pot estar buit']"
+
+              v-model="email"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+
+          ></v-text-field>
+
+          <v-progress-linear
+              v-if="loading"
+              indeterminate
+              rounded
+              color="var(--dl-color-miostodos-moradoprincipal)"
+              class="mb-2"
+          ></v-progress-linear>
+          <button class="btn d-flex col-sm-12 boton w-100" >
+            Crear l'usuari
+          </button>
+
+        </v-form>
+      </div>
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <div v-if="boxMsg" class="box-message-wrapper">
     <box-message :card="card"></box-message>
   </div>
 </template>
 
 <script setup>
-import {onBeforeMount, ref, computed} from "vue";
+import {onBeforeMount, ref, computed, onMounted, onUnmounted} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {comentAdd, userAdd} from "@/utils/icons";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const store = useStore()
 const router = useRouter()
@@ -163,7 +168,6 @@ function submitUser(){
     loading.value = true;
     store.dispatch('postNewUser',user).then((res)=>{
       loading.value=false
-      console.log(res)
       if (!res.ok) {
         handleError();
       } else {
@@ -173,7 +177,18 @@ function submitUser(){
   }
 
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){ router.back()}
 </script>
 

@@ -1,15 +1,16 @@
 <template>
 
-  <div v-if="falla!==null" class="container-fluid p-0">
-    <div class="pantalla">
+  <div v-if="falla!==null" class="container-fluid p-0  " :class="isWideScreen ? 'd-flex' : '' ">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="pantalla m-0 w-100">
 
       <div class="caja">
         <div class="box">
-          <img :src="'http://localhost:8000/uploads/brochures/' + falla.imagenPortada">
+          <img :src="falla.imagenPortada ? 'http://localhost:8000/uploads/brochures/' + falla.imagenPortada : 'http://localhost:8000/uploads/brochures/portada-base.jpg'" alt="" class="logo">
         </div>
       </div>
       <div class="logo-falla">
-        <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="" class="logo">
+        <img :src="falla.logo ? 'http://localhost:8000/uploads/brochures/' + falla.logo : 'http://localhost:8000/uploads/brochures/perfil-base.jpg'" alt="" class="logo">
       </div>
 
       <div class="caja-principal">
@@ -150,16 +151,17 @@
         </v-card-text>
 
       </div>
-      <nav-mobile></nav-mobile>
 
     </div>
+    <nav-mobile v-if="!isWideScreen"></nav-mobile>
   </div>
 </template>
 <script setup>
 import NavMobile from "@/components/NavMobile.vue";
 import {logoRight, logoPremio, logoLlibret, badWay} from "@/utils/icons";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {useStore} from "vuex";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const store = useStore()
 let isLibrets= ref(true)
@@ -183,7 +185,18 @@ const ejecutar= (llibret)=>{
   const pdf = 'http://localhost:8000/uploads/brochures/' + llibret
   window.open(pdf)
 }
+const isWideScreen = ref(window.innerWidth >= 1390);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1390;
+};
+
+onUnmounted(() => {
+
+  window.removeEventListener('resize', handleResize);
+});
 onMounted(()=>{
+  window.addEventListener('resize', handleResize);
   store.dispatch('getUserData')
 })
 
@@ -345,6 +358,7 @@ onMounted(()=>{
   left: 100px;
   transform: translate(-50%, -50%);
   z-index: 2;
+
 }
 
 .logo-falla .logo {

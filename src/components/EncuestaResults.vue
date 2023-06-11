@@ -52,10 +52,11 @@
 
 <script setup>
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
 import { badWay} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 let respuestaSeleccionada = ref({})
 let g = ref()
@@ -128,7 +129,18 @@ const deleteEncuesta = (idEncuesta)=>{
 const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };
+const isWideScreen = ref(window.innerWidth >= 768);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>

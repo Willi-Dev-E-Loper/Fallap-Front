@@ -24,7 +24,7 @@
       </div>
 
       <div class="d-flex align-center varios-chips mt-4">
-        <p class="chip">{{evento.participantes.length}} Asistentes</p>
+        <p class="chip">{{evento.contador ?? '0'}} Asistentes</p>
         <p v-if="evento.tienePago " class="chip">{{ evento.pagos}}€</p>
         <p v-if="evento.tienePago  && evento.pagadores.includes(store.state.id)" class="chip-pago">Pagat</p>
         <p v-if=" evento.tienePago && !evento.pagadores.includes(store.state.id)" class="chip-pago" style="background-color: #FFF4F7; border: 2px solid #F0426C; color: #F0426C; ">No Pagat</p>
@@ -32,8 +32,27 @@
       <div class="d-flex align-start mt-4 textosS">
         <p class="m-0">{{formatDateFooter(evento.fechaCreacion)}}</p>
       </div>
-      <button class="btn d-flex col-sm-12 boton" @click="asistir(evento.idEvento)">
+      <button v-if="!evento.tienePago" class="btn d-flex col-sm-12 boton" @click="asistir(index, evento.idEvento)">
        {{evento.tienePago ? 'Pagar i assistir' : 'Assistir'}}
+        <v-progress-circular
+            v-if="loading && showLoader[index]"
+            indeterminate
+            color=" var(--dl-color-miostodos-moradoprincipal)"
+            :width="2"
+            :size="15"
+            class="ml-3"
+        ></v-progress-circular>
+      </button>
+      <button v-if="evento.tienePago" class="btn d-flex col-sm-12 boton" @click="pagar(index, evento.idEvento)">
+        {{evento.tienePago ? 'Pagar i assistir' : 'Assistir'}}
+        <v-progress-circular
+            v-if="loading && showLoader[index]"
+            indeterminate
+            color=" var(--dl-color-miostodos-moradoprincipal)"
+            :width="2"
+            :size="15"
+            class="ml-3"
+        ></v-progress-circular>
       </button>
     </div>
   </div>
@@ -44,15 +63,17 @@
 
 <script setup>
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {badWay} from "@/utils/icons";
 import {formatDateFooter, parseFechaComentario, formatearFecha} from "@/utils/date";
 import {useRouter} from "vue-router";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const store = useStore()
 const router = useRouter()
 let showActions = ref([])
-
+let showLoader = ref([])
+let loading = ref(false)
 const eventos = computed(() => {
   if (store.state.falla) {
     showActions.value = Array(store.state.falla.eventos.length).fill(true);
@@ -91,18 +112,42 @@ const deleteEvent = (idEvento)=>{
   })
 
 }
-const asistir = (idEvento)=>{
+const asistir = (index, idEvento)=>{
+  showLoader.value[index] = !showLoader.value[index];
+  loading.value= true
   const id = store.state.id
   const react = {
     idEvento: idEvento,
     idUsuario: id,
   }
-  console.log( react)
   store.dispatch('reactEvent', react).then(()=>{
-    store.dispatch('getUserData')
+    store.dispatch('getUserData').then(()=>{loading.value= false})
   })
 }
+const pagar = (index, idEvento)=>{
+  showLoader.value[index] = !showLoader.value[index];
+  loading.value= true
+  const id = store.state.id
+  const react = {
+    idEvento: idEvento,
+    idUsuario: id,
+  }
+  store.dispatch('setPagador', react).then(()=>{
+    store.dispatch('getUserData').then(()=>{loading.value= false})
+  })
+}
+const isWideScreen = ref(window.innerWidth >= 768);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };
@@ -118,7 +163,7 @@ const toggleShowImg = (index) => {
   background: #FFFFFF;
   border: 1px solid #EBEEF2;
   border-radius: 8px;
-  cursor: pointer;
+
 }
 .boton{
   font-weight: 500;

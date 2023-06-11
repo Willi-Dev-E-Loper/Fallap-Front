@@ -1,8 +1,9 @@
 <template>
-  <div v-if="falla" class="container-fluid p-0">
-    <div class="panel-super-admin  row">
+  <div v-if="falla" class="container-fluid p-0 " :class="isWideScreen ? 'd-flex' : ''">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="panel-super-admin d-flex row">
 
-      <div class="logo-falla p-0 mb-3">
+      <div v-if="!isWideScreen" class="logo-falla p-0 mb-3">
         <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="logo falla" class="logo">
       </div>
 
@@ -11,7 +12,7 @@
       <v-tabs
           bg-color="#F0F3F6"
           color="#F0F3F6"
-          class="mt-6 p-0"
+          class="mt-10 p-0"
           selected-class="a"
           align-tabs="center"
           v-model="tab"
@@ -44,13 +45,14 @@
     </div>
 
   </div>
-  <nav-mobile></nav-mobile>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import AddUser from "@/components/AddUser.vue";
+import NavDesktop from "@/components/NavDesktop.vue";
 import {useRouter} from "vue-router";
 import Event from "@/components/Event.vue";
 import Encuesta from "@/components/Encuesta.vue";
@@ -64,13 +66,25 @@ const falla = computed( () => {
   return store.state.falla;
 
 });
+const isWideScreen = ref(window.innerWidth >= 1396);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1396;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
-.container-flex{
+.container-fluid{
   font-family:'Inter', sans-serif;
   padding: 10px;
+
 }
 .panel-super-admin{
   margin: 48px 24px 127px 24px;

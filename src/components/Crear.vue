@@ -1,38 +1,45 @@
 <template>
-  <div class="container-flex p-0">
-    <button class="logo-back ml-6 mt-10 " @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
-
-
-      <div class="titulo p-0">
-        <h1>Crear</h1>
-      </div>
-      <button
-          v-for="(boton,index) in botones"
-          :key="index"
-          @click="ejecutar(boton.accion)"
-          class="btn d-flex col-sm-12 boton">
-        <div  v-html="boton.icono">
-        </div>
-
-        <span class="mx-4">{{boton.texto}}</span>
+  <div class="container-flex p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="mt-8">
+      <button class="logo-back ml-6 mt-10 " @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
+      <div class="panel-super-admin  row mt-11">
 
+
+        <div class="titulo p-0">
+          <h1>Crear</h1>
+        </div>
+        <button
+            v-for="(boton,index) in botones"
+            :key="index"
+            @click="ejecutar(boton.accion)"
+            class="btn d-flex col-sm-12 boton">
+          <div  v-html="boton.icono">
+          </div>
+
+          <span class="mx-4">{{boton.texto}}</span>
+        </button>
+
+      </div>
     </div>
 
+
   </div>
-  <nav-mobile></nav-mobile>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
 
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import {useRouter} from "vue-router";
+import NavDesktop from "@/components/NavDesktop.vue";
+
+
 const router = useRouter()
 const botones= ref([
   {
@@ -77,6 +84,18 @@ const goComent= ()=>{
   router.push({ name: 'Nuevo comentario'
   })
 }
+const isWideScreen = ref(window.innerWidth >= 768);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){router.back()}
 
 </script>

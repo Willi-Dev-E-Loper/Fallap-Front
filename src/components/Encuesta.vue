@@ -58,17 +58,17 @@
 
 <script setup>
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {formatDateFooter, parseFechaComentario} from "@/utils/date";
 import {useRouter} from "vue-router";
 import { badWay} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 let respuestaSeleccionada = ref({})
 let g = ref()
 const store = useStore()
 const router = useRouter()
 let showActions = ref([])
-let showLoader = ref([])
 let loading = ref(false)
 const encuestas = computed(() => {
   if (store.state.falla) {
@@ -79,6 +79,7 @@ const encuestas = computed(() => {
     return [];
   }
 });
+let showLoader = ref(encuestas.value.map(() => false));
 const sortedEncuestas = computed(() => {
   return encuestas.value.slice().sort((a, b) => {
     const dateA = parseFechaComentario(a.fechaCreacion);
@@ -87,8 +88,7 @@ const sortedEncuestas = computed(() => {
   });
 });
 const reactEncuesta= (index, respuestas)=> {
-  showLoader.value[index] = !showLoader.value[index];
-  console.log(contarRepeticiones(respuestas))
+  showLoader.value[index] = true;
   loading.value = true
   store.dispatch('reactEncuesta', g.value).then(()=>{
     g.value = {
@@ -146,6 +146,8 @@ const deleteEncuesta = (idEncuesta)=>{
   })
 
 }
+const toggleShowLoad = (index) => {
+  showLoader.value[index] = false; };
 const toggleShowImg = (index) => {
   showActions.value[index] = !showActions.value[index];
 };
@@ -159,7 +161,18 @@ const toggleCheckbox = (eventoIndex, respuestaIndex, respuesta, idEncuesta) => {
     respuesta: respuesta,
   }
 };
+const isWideScreen = ref(window.innerWidth >= 768);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 768;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -173,7 +186,7 @@ const toggleCheckbox = (eventoIndex, respuestaIndex, respuesta, idEncuesta) => {
   background: #FFFFFF;
   border: 1px solid #EBEEF2;
   border-radius: 8px;
-  cursor: pointer;
+
 }
 .color{
   color:#909DAD;
@@ -265,6 +278,7 @@ const toggleCheckbox = (eventoIndex, respuestaIndex, respuesta, idEncuesta) => {
   border: 2px solid #EBEEF2;
   background-color: #fff;
   border-radius: 5px;
+  cursor:pointer;
 }
 
 .custom-checkbox:checked {

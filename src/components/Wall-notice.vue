@@ -3,8 +3,8 @@
     <nav-desktop v-if="isWideScreen"></nav-desktop>
     <div class="panel-super-admin  row  {{isWideScreen ? 'w-75': ''}}">
 
-      <h1 class="p-0 m-0 falla">Noticies<br> del món faller</h1>
-      <notice class="p-0 mt-6"></notice>
+      <h1 class="p-0 m-0 mt-4 falla">Noticies<br> del món faller</h1>
+      <notice class="p-0 mt-16"></notice>
     </div>
 
   </div>
@@ -30,10 +30,10 @@ const falla = computed( () => {
   return store.state.falla;
 
 });
-const isWideScreen = ref(window.innerWidth >= 768);
+const isWideScreen = ref(window.innerWidth >= 1300);
 
 const handleResize = () => {
-  isWideScreen.value = window.innerWidth >= 768;
+  isWideScreen.value = window.innerWidth >= 1300;
 };
 onMounted(() => {
   window.addEventListener('resize', handleResize);

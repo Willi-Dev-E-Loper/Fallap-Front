@@ -1,41 +1,48 @@
 <template>
-  <div class="container-flex p-0">
-    <div class="panel-super-admin  row">
-      <div class="logo-falla p-0 mb-3">
-        <img :src="'http://localhost:8000/uploads/brochures/' + falla.logo" alt="" class="logo">
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="panel-super-admin  row w-100">
+      <div v-if="!isWideScreen" class="logo-falla p-0 mb-3">
+        <img :src="falla.logo ? 'http://localhost:8000/uploads/brochures/' + falla.logo : 'http://localhost:8000/uploads/brochures/perfil-base.jpg'" alt="logo-falla" class="logo">
       </div>
 
-      <p class="p-0 m-0">Falla</p>
-      <h1 class="p-0 m-0 mb-8 falla">{{ falla.nombre }}</h1>
+      <div class="mt-6 p-0">
+        <p class="p-0 m-0">Falla</p>
+        <h1 class="p-0 m-0 falla">{{ falla.nombre }}</h1>
+      </div>
 
+      <div class="titulo p-0 ">
 
-      <button
-          v-for="(boton,index) in botones"
-          :key="index"
-          @click="handleClick(boton.accion)"
-          class="btn d-flex col-sm-12 boton">
-        <div class="feo" v-html="boton.icono">
-        </div>
+        <button
+            v-for="(boton,index) in botones"
 
-        <span class="mx-4">{{boton.texto}}</span>
-        <div class="feo">
+            :key="index"
+            @click="handleClick(boton.accion)"
+            class="btn d-flex col-sm-12 boton w-100">
+          <div class="feo" v-html="boton.icono">
+          </div>
 
-        </div>
+          <span class="mx-4">{{boton.texto}}</span>
+          <div class="feo">
 
-      </button>
+          </div>
+
+        </button>
+      </div>
 
     </div>
-    <nav-mobile></nav-mobile>
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {create, addPay, addUserCsv, addUsericon, updateFalla, updateLlibret, showEncuestasicon} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const router = useRouter()
 const store = useStore()
@@ -150,7 +157,18 @@ const editFalla= ()=>{
     params: {titulo: 'Editar falla', edit: true}
   })
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -164,6 +182,7 @@ const editFalla= ()=>{
 }
 .logo-falla img{
   width: 100px;
+  border-radius:50%;
 }
 .titulo{
 
@@ -192,7 +211,7 @@ path {
   margin-top: 16px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+
   align-items: center;
   padding: 10px 16px;
   box-shadow: 0 4px 6px -2px rgba(216, 226, 248, 0.3);

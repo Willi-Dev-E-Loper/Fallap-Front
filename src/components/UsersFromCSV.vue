@@ -1,31 +1,33 @@
 <template>
-  <div class="container-fluid">
-    <button class="logo-back ml-6 mt-7" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-7" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="panel-super-admin  row" :class="isWideScreen ? 'mt-6' : '' ">
 
-      <div class="titulo p-0">
-        <h1>Importar usuaris CSV</h1>
-      </div>
+        <div class="titulo p-0">
+          <h1>Importar usuaris CSV</h1>
+        </div>
 
-      <v-form   @submit.prevent="submitCsv" ref="form" class="p-0">
-      <v-select
-          v-if="store.state.role==='ROLE_SUPER_ADMIN'"
-          class="mt-4  p-0 custom-select "
-          v-model="fallaSeleccionada"
-          :items="fallas"
-          item-value="idFalla"
-          item-title="nombre"
-          label="Tria una falla"
-          variant="outlined"
-          density="comfortable"
-          rounded="circle"
+        <v-form   @submit.prevent="submitCsv" ref="form" class="p-0" :class="isWideScreen ? 'mt-2' : '' " >
+          <v-select
+              v-if="store.state.role==='ROLE_SUPER_ADMIN'"
+              class="mt-4  p-0 custom-select "
+              v-model="fallaSeleccionada"
+              :items="fallas"
+              item-value="idFalla"
+              item-title="nombre"
+              label="Tria una falla"
+              variant="outlined"
+              density="comfortable"
+              rounded="circle"
 
-          clearable
-      ></v-select>
+              clearable
+          ></v-select>
 
           <v-file-input
               v-model="csv"
@@ -42,20 +44,22 @@
           ></v-file-input>
 
 
-      <button class="btn d-flex col-sm-12 boton w-100"  >
-        Importar usuaris
-      </button>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
-      </v-form>
+          <button class="btn d-flex col-sm-12 boton w-100"  >
+            Importar usuaris
+          </button>
+          <v-progress-linear
+              v-if="loading"
+              indeterminate
+              rounded
+              color="var(--dl-color-miostodos-moradoprincipal)"
+          ></v-progress-linear>
+        </v-form>
+      </div>
     </div>
-    <nav-mobile></nav-mobile>
+
 
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <div v-if="boxMsg" class="box-message-wrapper">
     <box-message :card="card"  @avanzar="realizarAccionAvanzar" @cancelar="realizarAccionCancelar"></box-message>
     <v-progress-linear
@@ -68,12 +72,13 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {fallaAdd, userAdd} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
 
 const router = useRouter()
 const store = useStore()
@@ -99,7 +104,6 @@ const idF= computed(() => {
   }
 });
 const realizarAccionAvanzar = ()=> {
-  console.log('asdasd')
   let formData = new FormData()
   if(csv.value){
     const idFalla = store.state.role==='ROLE_SUPER_ADMIN' ? fallaSeleccionada.value  : idF.value
@@ -141,7 +145,6 @@ const realizarAccionAvanzar = ()=> {
           boton2: ''
         }
         store.dispatch('getUserData')
-        console.log((res))
       }
 
 
@@ -164,7 +167,18 @@ const submitCsv = ()=>{
 function toggleCheckbox() {
   this.isAdmin = !this.isAdmin; // Cambia el valor de la variable cuando se cambia el estado del checkbox
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
 
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -178,7 +192,6 @@ function toggleCheckbox() {
 }
 .container-fluid{
   font-family:'Inter', sans-serif;
-  border: 1px solid blue;
   height: 100vh;
 }
 .panel-super-admin{

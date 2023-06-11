@@ -1,85 +1,90 @@
 <template>
-  <div class="container-fluid p-0">
-    <button class="logo-back ml-6 mt-7" @click="goBack">
-      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="panel-super-admin  row">
-
-      <div class="titulo p-0">
-        <p>Actualitzar llibrets</p>
-      </div>
-
-
-      <div class="d-flex flex-column align-start p-0">
-        <p class="titulo2">Llibrets actuals</p>
-        <v-chip
-            v-for="llibret in llibrets"
-            class="mb-2 mt-1 pil"
-            border="none"
-            closable
-
-            variant="text">
-
-          {{ llibret[0] }} - {{ llibret[1] }}
-        </v-chip>
-      </div>
-
-      <p class="titulo2 mt-4 p-0">Afegir llibret</p>
-      <v-form   @submit.prevent="submitLlibret" ref="form" class="p-0">
-      <v-text-field
-          v-model="nombreLlibret"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Titol del llibret"
-          :rules="[v => !!v || 'El nom del llibret no pot estar buit']"
-          prepend-inner-icon="mdi mdi-notebook-edit-outline"
-          density="comfortable"
-          placeholder="El foc de la vida"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-
-      <v-file-input
-          v-model="llibret"
-          class="mt-1  p-0 custom-select "
-          clearable
-          chips
-          accept=".pdf"
-          :rules=" [v => (v && v.length > 0) || 'El camp llibret no pot estar buit']"
-          base-color="var(--dl-color-miostodos-moradoprincipal)"
-          label="Selecciona o arrastra el llibret ací"
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi mdi-notebook-plus-outline"
-          density="comfortable"
-      ></v-file-input>
-      <v-text-field
-          v-model="anyLlibret"
-          class="mt-1 col-sm-12 p-0 custom-input"
-          label="Any del llibret"
-          :rules="[v => !!v || 'El any del llibret no pot estar buit']"
-          prepend-inner-icon="mdi mdi-calendar-range"
-          density="comfortable"
-          variant="outlined"
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-text-field>
-
-
-
-      <button class="btn d-flex col-sm-12 boton w-100" >
-        Afegir llibret
+  <div class="container-fluid p-0 d-flex">
+    <nav-desktop v-if="isWideScreen"></nav-desktop>
+    <div class="w-100">
+      <button class="logo-back ml-6 mt-7" @click="goBack">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#1D242D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
-      <v-progress-linear
-          v-if="loading"
-          indeterminate
-          rounded
-          color="var(--dl-color-miostodos-moradoprincipal)"
-      ></v-progress-linear>
-      </v-form>
+      <div class="panel-super-admin  row">
+
+        <div class="titulo p-0">
+          <p>Actualitzar llibrets</p>
+        </div>
+
+
+        <div class="d-flex flex-column align-start p-0" >
+          <p class="titulo2">Llibrets actuals</p>
+          <v-chip
+              v-for="llibret in llibrets"
+              class="mb-2 mt-1 pil"
+              border="none"
+              closable
+
+              variant="text">
+
+            {{ llibret[0] }} - {{ llibret[1] }}
+          </v-chip>
+        </div>
+
+        <p class="titulo2 mt-4 p-0"  :class="isWideScreen ? 'mt-10' : '' ">Afegir llibret</p>
+        <v-form   @submit.prevent="submitLlibret" ref="form" class="p-0">
+          <v-text-field
+              v-model="nombreLlibret"
+              class="mt-1 col-sm-12 p-0 custom-input"
+              label="Titol del llibret"
+              :rules="[v => !!v || 'El nom del llibret no pot estar buit']"
+              prepend-inner-icon="mdi mdi-notebook-edit-outline"
+              density="comfortable"
+              placeholder="El foc de la vida"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+          ></v-text-field>
+
+          <v-file-input
+              v-model="llibret"
+              class="mt-1  p-0 custom-select "
+              clearable
+              chips
+              accept=".pdf"
+              :rules=" [v => (v && v.length > 0) || 'El camp llibret no pot estar buit']"
+              base-color="var(--dl-color-miostodos-moradoprincipal)"
+              label="Selecciona o arrastra el llibret ací"
+              variant="outlined"
+              prepend-icon=""
+              prepend-inner-icon="mdi mdi-notebook-plus-outline"
+              density="comfortable"
+          ></v-file-input>
+          <v-text-field
+              v-model="anyLlibret"
+              class="mt-1 col-sm-12 p-0 custom-input"
+              label="Any del llibret"
+              :rules="[v => !!v || 'El any del llibret no pot estar buit']"
+              prepend-inner-icon="mdi mdi-calendar-range"
+              density="comfortable"
+              variant="outlined"
+              color="var(--dl-color-miostodos-moradoprincipal)"
+          ></v-text-field>
+
+
+          <v-progress-linear
+              v-if="loading"
+              indeterminate
+              rounded
+              color="var(--dl-color-miostodos-moradoprincipal)"
+              class="mb-2"
+          ></v-progress-linear>
+          <button class="btn d-flex col-sm-12 boton w-100" >
+            Afegir llibret
+          </button>
+
+        </v-form>
+      </div>
     </div>
-    <nav-mobile></nav-mobile>
+
   </div>
+  <nav-mobile v-if="!isWideScreen"></nav-mobile>
   <v-fade-transition>
     <div v-if="boxMsg" class="box-message-wrapper">
       <box-message :card="card"></box-message>
@@ -88,13 +93,15 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import NavMobile from "@/components/NavMobile.vue";
 import BoxMessage from "@/components/BoxMessage.vue";
 import {useRouter} from "vue-router";
 import {dateNow} from "@/utils/date";
 import {useStore} from "vuex";
 import { llibretAdd} from "@/utils/icons";
+import NavDesktop from "@/components/NavDesktop.vue";
+
 const router = useRouter()
 const store = useStore()
 let nombreLlibret= ref()
@@ -102,7 +109,6 @@ let llibret = ref()
 let anyLlibret = ref()
 const llibrets = computed(() => {
   if (store.state.falla) {
-    console.log(store.state.falla.llibrets)
     return store.state.falla.llibrets;
   } else {
     return [];
@@ -120,7 +126,7 @@ let card=ref({
   boton2: ''
 })
 function submitLlibret(){
-
+  loading.value = true
   let formdata = new FormData()
   if(llibret.value && nombreLlibret.value && anyLlibret.value){
     formdata.append('llibret', llibret.value[0])
@@ -156,19 +162,31 @@ function submitLlibret(){
         };
       }, 4000);
     };
-    //console.log(store.state.falla.idFalla)
     store.dispatch('setLlibret',formdata).then((res) => {
       if (!res.ok) {
         handleError();
       } else {
         boxMsg.value = true;
       }
+      loading.value = false
       store.dispatch('getUserData')
     })
   }
 
 
 }
+const isWideScreen = ref(window.innerWidth >= 1300);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1300;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 function goBack(){router.back()}
 function submitFalla(){
   let falla={
@@ -185,7 +203,6 @@ function submitFalla(){
     telefonoFalla:telefonoFalla.value,
     webFalla:webFalla.value,
   }
-  console.log(falla)
 }
 
 </script>

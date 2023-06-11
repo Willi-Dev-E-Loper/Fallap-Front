@@ -1,19 +1,19 @@
 <template>
   <div class="container-fluid d-flex justify-center align-center color h-100">
-    <div class="panel-super-admin">
+    <div class="panel-super-admin " :class="isWideScreen ? 'w-50' : '' ">
 
-      <div class="custom-card text-center">
+      <div class="custom-card text-center ">
         <div class="icon" v-html="card.icono"></div>
         <h2 class="mt-1 textosXl">{{card.titulo}}</h2>
         <p >{{card.mensage ?? ''}}</p>
-        <button v-if="card.type==='success'" class="btn d-flex boton" @click="goHome">
+        <button v-if="card.type==='success'" class="btn d-flex boton" :class="isWideScreen ? 'w-75' : '' " @click="goHome">
           {{ card.boton }}
         </button>
         <div v-if="card.type==='warn'" class="botones-warn d-flex flex-row w-100 justify-content-around ">
-          <button  class="btn d-flex botones" @click="() => $emit('cancelar')">
+          <button  class="btn d-flex botones" :class="isWideScreen ? 'mx-4' : '' " @click="() => $emit('cancelar')">
             {{ card.boton1 }}
           </button>
-          <button class="btn d-flex  botones" @click="() => $emit('avanzar')"  >
+          <button class="btn d-flex  botones" :class="isWideScreen ? 'mx-4' : '' " @click="() => $emit('avanzar')"  >
             {{ card.boton2 }}
           </button>
         </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 const props = defineProps(['card'])
@@ -34,12 +34,19 @@ const emits = defineEmits(['avanzar', 'cancelar']);
 const router = useRouter()
 const store = useStore()
 const goHome = ()=>{router.back()}
-const accessAccept= ()=>{
-  store.commit('setAccesCtrl', true)
-}
-const accessDenied= ()=>{
-  store.commit('setAccesCtrl', false)
-}
+
+const isWideScreen = ref(window.innerWidth >= 1200);
+
+const handleResize = () => {
+  isWideScreen.value = window.innerWidth >= 1200;
+};
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>

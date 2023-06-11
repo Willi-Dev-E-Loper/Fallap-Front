@@ -100,10 +100,14 @@ export const store = createStore({
     actions: {
         getUserData({ commit, state }) {
             return new Promise((resolve, reject) => {
-                axios.get('http://localhost:8000/api/user/'+ state.email)
+                axios.get('http://localhost:8000/api/user/'+ state.email,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                        },
+                    })
                     .then((res) => {
                         let userData = res.data.user;
-                        console.log(userData);
                         commit('setName', userData.nombre);
                         commit('setSurname', userData.apellidos);
                         commit('setEmail', userData.email);
@@ -113,7 +117,6 @@ export const store = createStore({
                         commit('setFalla', userData.falla);
                         commit('setId', userData.id);
                         commit('setIdFalla', userData.falla.idFalla);
-                        console.log(userData.falla);
 
                         resolve(); // Resuelve la promesa sin ningún valor adicional
                     })
@@ -145,7 +148,12 @@ export const store = createStore({
         },
         getFallasToSelect({ commit, state }) {
             return new Promise((resolve, reject) => {
-                axios.get('http://localhost:8000/api/falla/select')
+                axios.get('http://localhost:8000/api/falla/select',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                        },
+                    })
                     .then((res) => {
                         let fallas = res.data;
                         commit('setFallas2Select', fallas);
@@ -159,9 +167,13 @@ export const store = createStore({
         },
         getNoticias({ commit, state }) {
             return new Promise((resolve, reject) => {
-                axios.get('http://localhost:8000/api/falla/noticias')
+                axios.get('http://localhost:8000/api/falla/noticias',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                        },
+                    })
                     .then((res) => {
-                        console.log(res.data)
                         let fallas = res.data;
                         commit('setNoticias', fallas);
                         resolve(); // Resuelve la promesa sin ningún valor adicional
@@ -178,6 +190,11 @@ export const store = createStore({
                const response = await axios.post(
                    'http://localhost:8000/api/user/new',
                    data,
+                   {
+                       headers: {
+                           Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                       },
+                   }
                );
 
                return response.data;
@@ -194,6 +211,7 @@ export const store = createStore({
                             {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
+                                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                                 },
                             }
                         );
@@ -212,6 +230,7 @@ export const store = createStore({
                             {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
+                                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                                 },
                             }
                         );
@@ -223,19 +242,42 @@ export const store = createStore({
                     }
         },
         async deleteEvent({commit, state}, data){
-            await axios.delete('http://localhost:8000/api/evento/' + state.idEvent)
+            await axios.delete('http://localhost:8000/api/evento/' + state.idEvent,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
                 })
         },
         async reactEvent({commit, state}, data){
-            console.log(data)
-            await axios.put('http://localhost:8000/api/evento/setParticipante/'+ data.idEvento, data.idUsuario)
+            await axios.put('http://localhost:8000/api/evento/setParticipante/'+ data.idEvento, data.idUsuario,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
                 .then(()=>
-                    {console.log('succes')}
+                    {}
+                )
+                .catch((err)=>{
+                    console.log(err)
+                })
+        },
+        async setPagador({commit, state}, data){
+            await axios.put('http://localhost:8000/api/evento/setPagador/'+ data.idEvento, data.idUsuario,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
+                .then(()=>
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -250,6 +292,7 @@ export const store = createStore({
                             {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
+                                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                                 },
                             }
                         );
@@ -261,7 +304,6 @@ export const store = createStore({
                     }
         },
         async putFalla({commit, state}, data){
-            console.log(state.idFalla)
             try {
                 const response = await axios.post(
                     'http://localhost:8000/api/falla/' + state.idFalla,
@@ -269,6 +311,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -287,6 +330,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -300,9 +344,10 @@ export const store = createStore({
         async setPremio({commit, state}, data){
             await axios.post('http://localhost:8000/api/falla/premio', data, {
                 headers: {
+                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                 }})
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -311,9 +356,10 @@ export const store = createStore({
         async unsetPremio({commit, state}, data){
             await axios.post('http://localhost:8000/api/falla/delete-premio', data, {
                 headers: {
+                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                 }})
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -327,6 +373,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -346,6 +393,7 @@ export const store = createStore({
                             {
                                 headers: {
                                     'Content-Type': 'multipart/form-data',
+                                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                                 },
                             }
                         );
@@ -357,9 +405,14 @@ export const store = createStore({
                     }
         },
         async deleteComent({commit, state}, data){
-            await axios.delete('http://localhost:8000/api/comentario/' + state.idComent)
+            await axios.delete('http://localhost:8000/api/comentario/' + state.idComent,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -373,6 +426,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -392,6 +446,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -406,7 +461,12 @@ export const store = createStore({
             try {
                 const response = await axios.post(
                     'http://localhost:8000/api/encuesta/new',
-                    data
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                        },
+                    }
                 );
 
                 return response.data;
@@ -416,11 +476,15 @@ export const store = createStore({
             }
         },
         async putEncuesta({commit, state}, data){
-            console.log(data)
             try {
                 const response = await axios.post(
                     'http://localhost:8000/api/encuesta/'+ state.idEncuesta,
-                    data
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                        },
+                    }
                 );
 
                 return response.data;
@@ -430,18 +494,28 @@ export const store = createStore({
             }
         },
         async deleteEncuesta({commit, state}, data){
-            await axios.delete('http://localhost:8000/api/encuesta/' + state.idEncuesta)
+            await axios.delete('http://localhost:8000/api/encuesta/' + state.idEncuesta,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
                 })
         },
         async reactEncuesta({commit, state}, data){
-            await axios.put('http://localhost:8000/api/encuesta/react', data)
+            await axios.put('http://localhost:8000/api/encuesta/react', data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
+                    },
+                })
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -456,6 +530,7 @@ export const store = createStore({
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                         },
                     }
                 );
@@ -469,9 +544,10 @@ export const store = createStore({
         async postRole({commit, state}, data){
             await axios.post('http://localhost:8000/api/user/setRoles', data, {
                 headers: {
+                    Authorization: `Bearer ${state.token  || sessionStorage.getItem('token')}`,
                 }})
                 .then(()=>
-                    {console.log('succes')}
+                    {}
                 )
                 .catch((err)=>{
                     console.log(err)
@@ -491,8 +567,6 @@ export const store = createStore({
             });
         },
         isAuthenticated: (state) => {
-            console.log(state.expiration)
-            console.log(state.expiration > Date.now())
             return state.expiration > Date.now();
         }
     }
